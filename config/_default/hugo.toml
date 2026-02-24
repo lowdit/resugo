@@ -1,0 +1,15 @@
+title = 'Resume'
+languageCode = "fr-FR"
+defaultContentLanguage = "fr"
+
+[languages]
+  [languages.fr]
+    languageCode = "fr"
+    languageName = "Français"
+    weight = 1
+    title = "CV"
+  [languages.en]
+    languageCode = "en"
+    languageName = "English"
+    weight = 2
+    title = "Resume"

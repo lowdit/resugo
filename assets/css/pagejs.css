@@ -79,7 +79,7 @@
 
     /* uncomment this part for recto/verso book : ------------------------------------ */
 
-     
+
 /*    .pagedjs_pages {
         flex-direction: column;
         width: 100%;
@@ -93,7 +93,7 @@
         margin: 0 auto;
         margin-top: 10mm;
     } */
-    
+
 
     /*--------------------------------------------------------------------------------------*/
 
@@ -101,7 +101,7 @@
 
     /* uncomment this par to see the baseline : -------------------------------------------*/
 
-     
+
 /*    .pagedjs_pagebox {
         --pagedjs-baseline: 11px;
         --pagedjs-baseline-position: -4px;
@@ -111,7 +111,7 @@
         background-repeat: repeat-y;
         background-position-y: var(--pagedjs-baseline-position);
     } */
-    
+
 
     /*--------------------------------------------------------------------------------------*/
 }
@@ -195,7 +195,7 @@ figure + h3 {
     margin-top: 32px;
 }
 h3 + p {
-    margin-top: 23px; 
+    margin-top: 23px;
 }
 h4 {
     font-size: var(--text-lg);
@@ -204,10 +204,10 @@ h4 {
     margin-top: 30px;
 }
 figure + p + h4 {
-    margin-top: 33px; 
+    margin-top: 33px;
 }
 h4 + p {
-    margin-top: 18px; 
+    margin-top: 18px;
 }
 h5 {
     font-size: var(--text-base);
@@ -310,7 +310,7 @@ figcaption .credits {
     position: absolute;
     top: 0;
     right: 0;
-    -webkit-transform: rotate(-90deg); 
+    -webkit-transform: rotate(-90deg);
     transform: rotate(-90deg);
     -webkit-transform-origin: top right;
     transform-origin: top right;
@@ -394,7 +394,7 @@ blockquote {
                 13px 9px 0 0 rebeccapurple,
                 9px 13px 0 0 rebeccapurple;
   }
-  
+
   blockquote p, blockquote li {
     font-size: 90%;
     font-weight: 600;
@@ -495,12 +495,12 @@ tr.text-xxs > th, th.text-xxs {
     float: right;
 }
 /* set the style for the list numbering to none */
-#list-toc-generated { 
+#list-toc-generated {
     list-style: none;
     padding-left: 0;
     margin-top: 0;
 }
-#list-toc-generated a { 
+#list-toc-generated a {
     text-decoration: none;
 }
 #list-toc-generated .toc-element-level-1 {
@@ -516,23 +516,23 @@ tr.text-xxs > th, th.text-xxs {
     position: relative;
 }
 /* counters */
-#list-toc-generated { 
-    counter-reset: counterTocLevel1; 
+#list-toc-generated {
+    counter-reset: counterTocLevel1;
 }
-#list-toc-generated .toc-element-level-1 { 
-    counter-increment: counterTocLevel1; 
-    counter-reset: counterTocLevel2; 
+#list-toc-generated .toc-element-level-1 {
+    counter-increment: counterTocLevel1;
+    counter-reset: counterTocLevel2;
 }
 
 /*
-#list-toc-generated .toc-element-level-1::before { 
+#list-toc-generated .toc-element-level-1::before {
     content: counter(counterTocLevel1) ". ";
     padding-right: 5px;
 }
-#list-toc-generated .toc-element-level-2 { 
-    counter-increment: counterTocLevel2; 
+#list-toc-generated .toc-element-level-2 {
+    counter-increment: counterTocLevel2;
 }
-#list-toc-generated .toc-element-level-2::before { 
+#list-toc-generated .toc-element-level-2::before {
     content: counter(counterTocLevel1) ". " counter(counterTocLevel2) ". ";
     padding-right: 5px;
 }*/
@@ -552,10 +552,10 @@ tr.text-xxs > th, th.text-xxs {
 }
 /* fake leading */
 /*#list-toc-generated .toc-element::after {
-    content: 
+    content:
         ".............................................."
         ".............................................."
-        ".............................................."  
+        ".............................................."
         "........";
     opacity: 0;
     float: left;
@@ -710,7 +710,7 @@ aside img {
 #last-page img {
     object-position: right;
 }
-#cover, 
+#cover,
 #first-page {
     font-family: var(--serif);
     break-before: avoid;
@@ -721,7 +721,7 @@ aside img {
     break-before: avoid;
     break-after: avoid;
 }
-#cover header, 
+#cover header,
 #first-page header {
     position: relative;
 }
@@ -859,7 +859,6 @@ note::after {
     #colophon, #last-page {
         break-before: left;
     }
-    
 }
 
 @page {

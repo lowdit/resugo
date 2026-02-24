@@ -1,4 +1,5 @@
 ---
+title: Accueil
 outputs:
   home:
     - html

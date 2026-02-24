@@ -1,0 +1,16 @@
+{{ define "main" }}
+<div class="container">
+  <section class="section hero">
+    <div class="hero-info">
+      <h1 class="hero-title">{{ .Title }}</h1>
+      <ul class="unstyled">
+      {{range where $.Site.RegularPages "Type" "resume" }}
+       <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+      {{ end }}
+      </ul>
+    </div>
+  </section>
+  {{/* Shortcodes from page content  */}}
+  {{ partialCached "content.html" .Content .Content }}
+</div>
+{{ end }}

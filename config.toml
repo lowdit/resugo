@@ -15,7 +15,7 @@
   _merge = 'deep'
 [cascade]
   _merge = 'deep'
- 
+
 [outputFormats.resume]
   baseName = "print"
   mediaType = "text/html"
