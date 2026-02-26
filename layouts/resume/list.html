@@ -1,0 +1,49 @@
+{{ define "main" -}}
+<div class="container--sm">
+  <section>
+    <h1 class="page-header-title">{{ .Title }}</h1>
+    <p class="page-header-desc">
+      {{- with .Params.Summary -}}
+        {{- . -}}
+      {{- else -}}
+        {{- with .Description -}}
+          {{- . | markdownify -}}
+        {{- end -}}
+      {{- end -}}
+    </p>
+  </section>
+  <section>
+    {{ $.Scratch.Set "menu" slice }}
+    {{ with .Content }}{{ partial "content.html" . . }}{{- end }}
+
+    {{ $range2 := cond (ne (len .Sections) 0) .RegularPages .Sections }}
+    {{ with $range2 }}
+      <h3 hidden>Articles</h3>
+      {{- range $id, $value := ($.Paginate $range2 2000).Pages }}
+        {{ partial "posts/post-entry.html" . }}
+        <div class="post-entry-divider"></div>
+      {{- end }}
+    {{ end -}}
+    {{ $range1 := (cond (ne (len .Sections) 0) .Sections .RegularPages) }}
+    {{ with $range1 }}
+      <h3 hidden>Sections</h3>
+      {{ $rangeResume := where ($.Paginate . 2000).Pages "Params.letter" "ne" true }}
+      {{ $rangeLetter := where ($.Paginate . 2000).Pages "Params.letter" "eq" true }}
+      {{ with $rangeResume }}
+      <h2>Resumes</h2>
+      {{- range $id, $value := . }}
+        {{ partial "posts/post-entry.html" . }}
+        <div class="post-entry-divider"></div>
+      {{- end }}
+      {{- end }}
+      {{ with $rangeLetter }}      
+      <h2>Letters</h2>
+      {{- range $id, $value := . }}
+        {{ partial "posts/post-entry.html" . }}
+        <div class="post-entry-divider"></div>
+      {{- end }}
+      {{- end }}
+    {{ end -}}
+  </section>
+</div>
+{{ end }}

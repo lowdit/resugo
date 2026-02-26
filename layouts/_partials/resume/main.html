@@ -462,9 +462,11 @@
                   }
                   .img-background {
                     position: absolute;
-                    bottom: -190pt;
+                    left: 50%;
+                    bottom: -90pt;
                     max-width: 100%;
                     z-index: -1;
+                    transform: translate(-50%,-50%);
                   }
                 }
 
@@ -630,6 +632,7 @@
     </title>
   </head>
   <body>
+    {{ if .Params.resume }}
     <header class="header">
         <div class="subtitle">
           Resume
@@ -649,8 +652,10 @@
           </address>
         </div>
     </header>
+    {{ end -}}
     <main class="content">
-      {{- range .Params.resume.section }}
+      {{- with .Params.resume.section  }}
+      {{- range . }}
       <article class="section {{ .name | anchorize }}">
         <h2>{{ .name }}</h2>
         {{ range .element }}
@@ -689,6 +694,7 @@
         {{ end }}
         </article>
       {{ end -}}
+      {{ end -}}
       {{- with .Params.motivation }}
       <article class="section section-motivation page-break">
         <h2 class="no-print">Lettre de motivation</h2>
@@ -700,7 +706,7 @@
         </div>
         <hr>
         {{ . | markdownify }}
-        <img src="{{ ((resources.ByType "image").GetMatch (printf "**/%s" "thin-line-white.jpg")).Permalink }}" class="img-background"/>
+        <img src="{{ ((resources.ByType "image").GetMatch (printf "**/%s" "thin-line.svg")).Permalink }}" class="img-background"/>
       </article>
       {{ end -}}
     </main>
