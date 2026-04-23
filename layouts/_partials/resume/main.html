@@ -76,14 +76,17 @@
       {{- with .Params.motivation }}
       <article class="section section-motivation page-break">
         <h2 class="no-print">Lettre de motivation</h2>
+        {{- if and (or (isset $.Parent.Params "address") (isset $.Params "address")) (not (eq $.Params.address false)) }}
         <div class="section-address">
           <address>
-            <h3>{{ $.Params.resume.name }}</h3>
-            <p>14, rue Margurite d’Autriche<br><b>01000</b> Bourg-en-Bresse</p>
+            <h3>{{ $.Params.name }}</h3>
+            {{ (cond (not $.Params.address) $.Parent.Params.address $.Params.address) | markdownify }}
           </address>
         </div>
+        {{ end }}
         <hr>
-        {{ . | markdownify }}
+        {{- $content := . | markdownify -}}
+        {{ partialCached "content.html" $content $content }}
         <img src="{{ ((resources.ByType "image").GetMatch (printf "**/%s" "thin-line.svg")).Permalink }}" class="img-background"/>
       </article>
       {{ end -}}

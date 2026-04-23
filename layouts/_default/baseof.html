@@ -5,14 +5,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  {{ if .Aliases }}
-    {{ range .Aliases }}
+  {{- if .Aliases }}
+    {{- range .Aliases }}
       <meta http-equiv="refresh" content="0; URL={{ . }}">
-    {{ end }}
-  {{ end }}
-  {{ with $.Param "robots" }}
+    {{ end -}}
+  {{ end -}}
+  {{- with $.Param "robots" }}
   <meta name="robots" content="{{ . }}">
-  {{ end }}
+  {{- else }}
+  <meta name="robots" content="index, follow">
+  {{ end -}}
   <title>{{ block "title" . }}{{ end }} | {{ with .Site.Title }} {{ . }}{{ end }}</title>
   <meta name="description" content="{{ if .Params.header }}{{ .Params.header }}{{ else if .Params.description }}{{ .Params.description }}{{ else }}{{ .Site.Params.description }}{{ end}}">
   <script type="module">
@@ -28,7 +30,6 @@
     <link rel="alternate" hreflang="{{ .Language.Lang }}" href="{{ .Permalink }}" title="{{ .Language.LanguageName }}">
     {{- end -}}
   {{- end -}}
-  <meta name="robots" content="index, follow">
 
   <!-- Favicons -->
   <link rel="apple-touch-icon" sizes="180x180" href="{{ $.Site.BaseURL | default "/" }}assets/favicons/apple-touch-icon.png">
