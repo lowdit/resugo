@@ -1,15 +1,15 @@
 title = 'Resume'
-languageCode = "fr-FR"
+locale ="fr-FR"
 defaultContentLanguage = "fr"
 
 [languages]
   [languages.fr]
-    languageCode = "fr"
-    languageName = "Français"
+    locale ="fr"
+    label ="Français"
     weight = 1
     title = "CV"
   [languages.en]
-    languageCode = "en"
-    languageName = "English"
+    locale ="en"
+    label ="English"
     weight = 2
     title = "Resume"

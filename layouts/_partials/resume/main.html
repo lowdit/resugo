@@ -66,7 +66,7 @@
           <div class="text">
           {{ .text | markdownify }}
           </div>
-          {{ with .clients }}<p><strong>Clients :</strong> {{ delimit . " - "}}</p>{{ end }}
+          {{ with .clients }}<p class="clients"><strong>Clients :</strong> {{ delimit . " - "}}</p>{{ end }}
           {{ end -}}
         </section>
         {{ end }}
@@ -657,8 +657,13 @@
               grid-column: 2 / 3;
             }
 
+            & .subsection:has(.clients) {
+              border-top: 1px solid;
+              padding-bottom: 0;
+            }
+
             & .subsection:not(:first-of-type) {
-              padding: 1em 0 0;
+              padding-top: 1em;
               border-top: 1px solid;
             }
 
