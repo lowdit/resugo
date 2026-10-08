@@ -58,9 +58,11 @@
           {{- else }}
           <header class="page-avoid">
           {{ if not .skills }}<h3>{{ .title }}</h3>{{ end }}
+            {{- with .date }}
             <span class="date">
-              {{ .date }}
+              {{ . }}
             </span>
+            {{ end -}}
             <span><em>{{ .company }}</em></span>
           </header>
           <div class="text">
@@ -75,7 +77,7 @@
       {{ end -}}
       {{- with .Params.motivation }}
       <article class="section section-motivation page-break">
-        <h2 class="no-print">Lettre de motivation</h2>
+        <h2 class="no-print">{{ i18n "title-letter" }}</h2>
         {{- if and (or (isset $.Parent.Params "address") (isset $.Params "address")) (not (eq $.Params.address false)) }}
         <div class="section-address">
           <address>
@@ -528,13 +530,10 @@
           .section-motivation {
             position: unset;
             padding-top: 50pt;
-            //padding-bottom: 50pt;
+            /*padding-bottom: 50pt;*/
             font-size: 11pt;
             z-index: 1;
 
-            //background-image: url("{{ ((resources.ByType "image").GetMatch (printf "**/%s" "thin-line-white.jpg")).Permalink }}");
-            //background-positon: center bottom;
-            //background-attachement: 100%;
             * {
               line-height: 1.6;
               font-family: "Atkinson", "Georgia", Arial, sans-serif;
