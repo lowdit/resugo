@@ -1,0 +1,18 @@
+{{ $groups := .groups }}
+{{ $onePage := .onePage | default false }}
+<div class="skill-grid{{ if $onePage }} skill-grid--one-page{{ end }}">
+  {{- range $groups }}
+  <div class="skill-card">
+    <h3 class="skill-card__title">{{ .name }}</h3>
+    {{- if $onePage }}
+    <p class="skill-keywords">{{ delimit .element " · " }}</p>
+    {{- else }}
+    <ul class="skill-tags">
+      {{- range .element }}
+      <li>{{ . }}</li>
+      {{- end }}
+    </ul>
+    {{- end }}
+  </div>
+  {{- end }}
+</div>

@@ -1,0 +1,30 @@
+{{- $raw := .phoneTel | default .phone -}}
+{{- $href := $raw -}}
+{{- $display := $raw -}}
+
+{{- if not (hasPrefix (lower $raw) "tel:") -}}
+  {{- $digits := replaceRE "[^0-9+]" "" $raw -}}
+  {{- $international := $digits -}}
+
+  {{- if and (hasPrefix $digits "0") (not (hasPrefix $digits "+")) -}}
+    {{- $international = printf "+33%s" (strings.TrimPrefix "0" $digits) -}}
+  {{- else if not (hasPrefix $digits "+") -}}
+    {{- $international = printf "+%s" $digits -}}
+  {{- end -}}
+
+  {{- $href = printf "tel:%s" $international -}}
+
+  {{- /* Affichage français : 06 12 34 56 78 */ -}}
+  {{- if hasPrefix $international "+33" -}}
+    {{- $national := printf "0%s" (strings.TrimPrefix "+33" $international) -}}
+    {{- $display = replaceRE `^(\+33)([0-9])([0-9]{2})([0-9]{2})([0-9]{2})([0-9]{2})$` `$1 $2 $3 $4 $5 $6` $international -}}
+
+  {{- else -}}
+    {{- $display = $international -}}
+  {{- end -}}
+{{- else -}}
+  {{- $href = $raw -}}
+  {{- $display = strings.TrimPrefix "tel:" $raw -}}
+{{- end -}}
+
+<a href="{{ $href }}" class="resume-contact-phone">{{ $display }}</a>

@@ -1,0 +1,118 @@
+<div class="container--sm">
+  <section class="page-header">
+    <h1 class="page-header-title">{{ .Title }}</h1>
+    {{- with .Description -}}
+      <p class="page-header-desc">{{ . | markdownify }}</p>
+    {{- end -}}
+  </section>
+  {{- with .Content -}}
+  <section class="resume-gallery-intro">
+    {{ partial "content.html" . . }}
+  </section>
+  {{- end -}}
+  {{- $items := .RegularPages -}}
+  {{- if gt (len .Sections) 0 -}}
+    {{- $items = .Sections -}}
+  {{- end -}}
+  {{- $cv := where $items "Params.resume" "!=" nil -}}
+  {{- $cv = where $cv "Params.motivation_letter" "!=" true -}}
+  {{- $cv = where $cv "File.BaseFileName" "ne" "letter" -}}
+  {{- $cv = $cv.ByTitle -}}
+  {{- if $cv -}}
+  <section class="resume-gallery" aria-labelledby="resume-gallery-heading">
+    <h2 id="resume-gallery-heading" class="visually-hidden">{{ i18n "resume-gallery-heading" | default "Curricula" }}</h2>
+    <div class="resume-gallery__grid">
+      {{- range $cv -}}
+        {{ partial "resume/gallery-card.html" (dict "page" .) }}
+      {{- end -}}
+    </div>
+  </section>
+  {{- end -}}
+</div>
+<style>
+  .resume-gallery__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 1.25rem;
+    margin-block: 2rem 3rem;
+  }
+  .resume-gallery-card {
+    margin: 0;
+    border: 1px solid color-mix(in srgb, currentColor 12%, transparent);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: color-mix(in srgb, currentColor 3%, transparent);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+  }
+  .resume-gallery-card:focus-within,
+  .resume-gallery-card:hover {
+    box-shadow: 0 0.35rem 1rem color-mix(in srgb, currentColor 15%, transparent);
+    transform: translateY(-2px);
+  }
+  .resume-gallery-card__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+  }
+  .resume-gallery-card__link:focus-visible {
+    outline: 2px solid var(--resume-accent, currentColor);
+    outline-offset: 2px;
+  }
+  .resume-gallery-card__visual {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    background: linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--resume-accent) 88%, #000),
+      var(--resume-accent)
+    );
+    color: #fff;
+  }
+  .resume-gallery-card__initials {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    opacity: 0.95;
+  }
+  .resume-gallery-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .resume-gallery-card__body {
+    padding: 0.85rem 1rem 1rem;
+    flex: 1;
+  }
+  .resume-gallery-card__title {
+    margin: 0 0 0.35rem;
+    font-size: 1rem;
+    line-height: 1.35;
+    font-weight: 600;
+  }
+  .resume-gallery-card__job,
+  .resume-gallery-card__name {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    opacity: 0.85;
+  }
+  .resume-gallery-card__name {
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    opacity: 0.65;
+  }
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

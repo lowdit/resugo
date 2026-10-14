@@ -1,4 +1,8 @@
 {{ define "main" -}}
+{{- $layout := .Params.layout | default .Layout -}}
+{{- if eq $layout "gallery" -}}
+  {{ partial "resume/gallery-list.html" . }}
+{{- else -}}
 <div class="container--sm">
   <section>
     <h1 class="page-header-title">{{ .Title }}</h1>
@@ -28,6 +32,7 @@
       <h3 hidden>Sections</h3>
       {{ $rangeResume := where ($.Paginate . 2000).Pages "Params.motivation_letter" "ne" true }}
       {{ $rangeLetter := where ($.Paginate . 2000).Pages "Params.motivation_letter" "eq" true }}
+      {{ $rangeLetter = where $rangeLetter "File.BaseFileName" "ne" "letter" }}
       {{ with $rangeResume }}
       <h2>Resumes</h2>
       {{- range $id, $value := . }}
@@ -43,4 +48,5 @@
     {{ end -}}
   </section>
 </div>
+{{- end -}}
 {{ end }}

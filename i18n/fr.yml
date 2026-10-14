@@ -29,3 +29,15 @@ nav-main: principale
 nav-mobile: principale
 nav-search: search
 title-letter: Lettre de motivation
+print-panel-title: Imprimer
+print-panel-intro: Choisissez un document ou regroupez les feuilles. L’aperçu (Ctrl+P) sans bouton imprime tout le dossier.
+print-one-document: Un seul document
+print-sheet-full: Parcours détaillé
+print-sheet-one-page: Synthèse
+print-sheet-letter: Lettre de motivation
+print-action-one: Imprimer la sélection
+print-action-all: Un PDF — les 3 feuilles à la suite
+print-action-separate: Trois PDF — une boîte de dialogue par feuille
+print-separate-hint: "Nom de fichier = titre de la page (le code CV change de place entre parcours détaillé et synthèse) :"
+print-missing-sheet: Non disponible pour ce dossier
+print-title-bundle: dossier

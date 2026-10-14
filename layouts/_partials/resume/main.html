@@ -1,98 +1,269 @@
+{{ $page := . }}
+{{ if .Page }}{{ $page = .Page }}{{ end }}
+{{ $accent := $page.Params.resume.accent | default "#0e7ab8" }}
+{{ $skipOnePage := $page.Params.resume.skipOnePage | default false }}
 <!DOCTYPE html>
-<html lang="{{ .Lang }}">
+<html lang="{{ $page.Lang }}">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="canonical" href="{{ .Permalink }}">
-    <title>
-      {{ .Params.resume.name }}, {{ .Params.resume.job }}
-    </title>
+    <link rel="canonical" href="{{ $page.Permalink }}">
+    <title>{{ $page.Params.resume.name }} — {{ $page.Params.resume.job }}</title>
   </head>
-  <body>
-    {{ if .Params.resume }}
-    <header class="header">
-        <div class="subtitle">
-          Resume
-        </div>
-        <div>
-          <h1>
-            {{ .Params.resume.name }}
-            <br>
-            <small>{{ .Params.resume.job }}</small>
-          </h1>
-          <div class="profile">
-            {{ printf "%s\n\n[eof]" .Params.resume.summary | markdownify | strings.TrimSuffix "<p>[eof]</p>\n" | safeHTML }}
-          </div>
-          <address>
-            <span href="{{ .Params.resume.social.blog }}">{{ replace .Params.resume.social.blog "https://" "" }}</span> &nbsp; &nbsp;
-            <span href="{{ .Params.resume.social.linkedin }}">{{ replace .Params.resume.social.linkedin "https://www.linkedin.com/" "" }}</span>
-          </address>
-        </div>
-    </header>
-    {{ end -}}
-    <main class="content">
-      {{- with .Params.resume.section  }}
-      {{- range . }}
-      <article class="section {{ .name | anchorize }}">
-        <h2>{{ .name }}</h2>
-        {{ range .element }}
-        <section class="subsection">
-          {{ if  .skills }}
-            {{- range .skills }}
-            <p>
-              <b>{{ .name }}</b><br>
-              {{ delimit .element " - "}}
-            </p>
-            {{ end -}}
-          {{- else if .focus }}
-            <div class="focus">
-            {{- range .focus }}
-            <div class="card">
-              {{- if .name }}<b class="name">{{ .name }}{{- with .date }} <span>{{ . }}</span>{{ end -}}</b>{{ end -}}
-              {{- with .description }}<span>{{ . | markdownify }}</span>{{ end -}}
-              {{- with .skills }}<span>{{ . }}</span>{{ end -}}
-            </div>
-            {{ end -}}
-            </div>
-          {{- else }}
-          <header class="page-avoid">
-          {{ if not .skills }}<h3>{{ .title }}</h3>{{ end }}
-            {{- with .date }}
-            <span class="date">
-              {{ . }}
-            </span>
-            {{ end -}}
-            <span><em>{{ .company }}</em></span>
-          </header>
-          <div class="text">
-          {{ .text | markdownify }}
-          </div>
-          {{ with .clients }}<p class="clients"><strong>Clients :</strong> {{ delimit . " - "}}</p>{{ end }}
-          {{ end -}}
-        </section>
-        {{ end }}
-        </article>
-      {{ end -}}
-      {{ end -}}
-      {{- with .Params.motivation }}
-      <article class="section section-motivation page-break">
-        <h2 class="no-print">{{ i18n "title-letter" }}</h2>
-        {{- if and (or (isset $.Parent.Params "address") (isset $.Params "address")) (not (eq $.Params.address false)) }}
-        <div class="section-address">
-          <address>
-            <h3>{{ $.Params.name }}</h3>
-            {{ (cond (not $.Params.address) $.Parent.Params.address $.Params.address) | markdownify }}
-          </address>
-        </div>
-        {{ end }}
-        <hr>
-        {{- $content := . | markdownify -}}
-        {{ partialCached "content.html" $content $content }}
-        <img src="{{ ((resources.ByType "image").GetMatch (printf "**/%s" "thin-line.svg")).Permalink }}" class="img-background"/>
-      </article>
-      {{ end -}}
-    </main>
+  <body style="--resume-accent: {{ $accent }};">
+    {{ if $page.Params.resume }}
+    {{- $printBase := $page.Params.resume.name | default $page.Title -}}
+    {{- $printJob := $page.Params.resume.job | default "" -}}
+    {{- $printCvCode := $page.Params.resume.printCode | default "CV" -}}
+    {{- $printLetterCode := $page.Params.resume.letterCode | default "LM" -}}
+    <nav
+      class="resume-print-hint no-print"
+      aria-label="{{ i18n "print-panel-title" }}"
+      data-print-name-base="{{ $printBase }}"
+      data-print-job="{{ $printJob }}"
+      data-print-cv-code="{{ $printCvCode }}"
+      data-print-letter-code="{{ $printLetterCode }}"
+      data-print-bundle-label="{{ i18n "print-title-bundle" }}"
+    >
+      <p class="resume-print-hint__lead"><strong>{{ i18n "print-panel-title" }}</strong> — {{ i18n "print-panel-intro" }}</p>
+      <fieldset class="resume-print-hint__choices">
+        <legend>{{ i18n "print-one-document" }}</legend>
+        <label class="resume-print-hint__choice">
+          <input type="radio" name="resume-print-sheet" value="full" checked>
+          <span>{{ i18n "print-sheet-full" }}</span>
+        </label>
+        {{- if not $skipOnePage }}
+        <label class="resume-print-hint__choice">
+          <input type="radio" name="resume-print-sheet" value="one-page">
+          <span>{{ i18n "print-sheet-one-page" }}</span>
+        </label>
+        {{- end }}
+        <label class="resume-print-hint__choice" data-resume-print-option="letter">
+          <input type="radio" name="resume-print-sheet" value="letter">
+          <span>{{ i18n "print-sheet-letter" }}</span>
+        </label>
+      </fieldset>
+      <div class="resume-print-hint__actions">
+        <button type="button" class="resume-print-hint__btn" data-resume-print-action="one">{{ i18n "print-action-one" }}</button>
+        <button type="button" class="resume-print-hint__btn" data-resume-print-action="all">{{ i18n "print-action-all" }}</button>
+        <button type="button" class="resume-print-hint__btn resume-print-hint__btn--secondary" data-resume-print-action="separate">{{ i18n "print-action-separate" }}</button>
+      </div>
+      <p class="resume-print-hint__note" hidden data-resume-print-separate-note>
+        {{ i18n "print-separate-hint" }}
+        <span class="resume-print-hint__examples" data-resume-print-filename-examples></span>
+      </p>
+    </nav>
+    {{ partial "resume/sheet.html" (dict "Page" $page "onePage" false) }}
+    {{ if not $skipOnePage }}
+    {{ partial "resume/sheet.html" (dict "Page" $page "onePage" true) }}
+    {{ end }}
+    {{ partial "resume/motivation.html" $page }}
+    {{ end }}
+    <script>
+      (function () {
+        var MODES = ["full", "one-page", "letter"];
+        var printNav = document.querySelector(".resume-print-hint");
+        var originalTitle = document.title;
+        var separateActive = false;
+        var PRINT_TITLE_DELAY_MS = 150;
+        var PRINT_QUEUE_GAP_MS = 650;
+        var TITLE_SEP = " — ";
+
+        function sheetNode(mode) {
+          if (mode === "full") return document.querySelector(".resume-sheet--full");
+          if (mode === "one-page") return document.querySelector(".resume-sheet--one-page");
+          if (mode === "letter") return document.querySelector(".resume-motivation");
+          return null;
+        }
+
+        function availableModes() {
+          return MODES.filter(function (mode) {
+            return sheetNode(mode);
+          });
+        }
+
+        function setPrintMode(mode) {
+          if (mode === "all") {
+            delete document.body.dataset.printMode;
+          } else {
+            document.body.dataset.printMode = mode;
+          }
+        }
+
+        function clearPrintMode() {
+          delete document.body.dataset.printMode;
+        }
+
+        function nameJob() {
+          if (!printNav) return { name: "", job: "" };
+          return {
+            name: printNav.getAttribute("data-print-name-base") || "",
+            job: printNav.getAttribute("data-print-job") || "",
+          };
+        }
+
+        function candidatureTitle() {
+          var parts = nameJob();
+          if (parts.name && parts.job) {
+            return parts.name + TITLE_SEP + parts.job;
+          }
+          return parts.name || parts.job || document.title;
+        }
+
+        /**
+         * CV long : Nom — CV — Poste (code au centre)
+         * CV court : Nom — Poste — CV (code en fin)
+         * Lettre : Nom — LM — Poste (autre code, en centre)
+         */
+        function documentTitleForMode(mode) {
+          if (!printNav) return originalTitle;
+          var parts = nameJob();
+          var name = parts.name;
+          var job = parts.job;
+          var cv = printNav.getAttribute("data-print-cv-code") || "CV";
+          var lm = printNav.getAttribute("data-print-letter-code") || "LM";
+          var bundle =
+            printNav.getAttribute("data-print-bundle-label") || "dossier";
+
+          if (mode === "full" && name && job) {
+            return name + TITLE_SEP + cv + TITLE_SEP + job;
+          }
+          if (mode === "one-page" && name && job) {
+            return name + TITLE_SEP + job + TITLE_SEP + cv;
+          }
+          if (mode === "letter" && name && job) {
+            return name + TITLE_SEP + lm + TITLE_SEP + job;
+          }
+          if (mode === "all" && name && job) {
+            return name + TITLE_SEP + job + TITLE_SEP + bundle;
+          }
+          return candidatureTitle();
+        }
+
+        function applyPrintTitle(mode) {
+          var next = documentTitleForMode(mode);
+          document.title = next;
+          var titleEl = document.querySelector("title");
+          if (titleEl) {
+            titleEl.textContent = next;
+          }
+        }
+
+        function triggerPrint(mode, printModeArg) {
+          var printMode = printModeArg !== undefined ? printModeArg : mode;
+          setPrintMode(printMode === "all" ? "all" : printMode);
+          applyPrintTitle(mode);
+          window.setTimeout(function () {
+            window.print();
+          }, PRINT_TITLE_DELAY_MS);
+        }
+
+        function restoreTitle() {
+          document.title = originalTitle;
+          var titleEl = document.querySelector("title");
+          if (titleEl) {
+            titleEl.textContent = originalTitle;
+          }
+        }
+
+        function fillFilenameExamples() {
+          var el = document.querySelector("[data-resume-print-filename-examples]");
+          if (!el || !printNav) return;
+          var names = availableModes().map(function (mode) {
+            return documentTitleForMode(mode);
+          });
+          if (names.length === 0) return;
+          el.textContent = " " + names.join(" · ") + ".";
+        }
+
+        function selectedSheet() {
+          var input = document.querySelector('input[name="resume-print-sheet"]:checked');
+          return input ? input.value : "full";
+        }
+
+        function syncSheetOptions() {
+          MODES.forEach(function (mode) {
+            var input = document.querySelector(
+              '.resume-print-hint__choice input[value="' + mode + '"]'
+            );
+            if (!input) return;
+            var label = input.closest(".resume-print-hint__choice");
+            var ok = !!sheetNode(mode);
+            label.hidden = !ok;
+            if (!ok && input.checked) {
+              var first = document.querySelector(
+                '.resume-print-hint__choice:not([hidden]) input[name="resume-print-sheet"]'
+              );
+              if (first) first.checked = true;
+            }
+          });
+          var count = availableModes().length;
+          document
+            .querySelectorAll('[data-resume-print-action="separate"], [data-resume-print-action="all"]')
+            .forEach(function (btn) {
+              btn.disabled = count < 2;
+            });
+        }
+
+        syncSheetOptions();
+        fillFilenameExamples();
+
+        document.querySelectorAll("[data-resume-print-action]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var action = btn.getAttribute("data-resume-print-action");
+            var note = document.querySelector("[data-resume-print-separate-note]");
+
+            if (action === "one") {
+              var mode = selectedSheet();
+              if (!sheetNode(mode)) return;
+              triggerPrint(mode);
+              return;
+            }
+
+            if (action === "all") {
+              triggerPrint("all", "all");
+              return;
+            }
+
+            if (action === "separate") {
+              var queue = availableModes();
+              if (queue.length < 2) return;
+              if (note) note.hidden = false;
+              fillFilenameExamples();
+              var index = 0;
+              separateActive = true;
+
+              function printQueueSheet() {
+                triggerPrint(queue[index]);
+              }
+
+              function afterSheet() {
+                index += 1;
+                if (index >= queue.length) {
+                  separateActive = false;
+                  clearPrintMode();
+                  restoreTitle();
+                  window.removeEventListener("afterprint", afterSheet);
+                  return;
+                }
+                window.setTimeout(printQueueSheet, PRINT_QUEUE_GAP_MS);
+              }
+
+              window.addEventListener("afterprint", afterSheet);
+              printQueueSheet();
+            }
+          });
+        });
+
+        window.addEventListener("afterprint", function () {
+          clearPrintMode();
+          if (!separateActive) {
+            restoreTitle();
+          }
+        });
+      })();
+    </script>
     <style>
       /* https://elements.envato.com/clean-professional-resumecv-N8RD8YC */
       @font-face {
@@ -166,77 +337,533 @@
         margin-bottom: 1em;
       }
 
+      .resume-print-hint {
+        max-width: 55rem;
+        margin: 0.5rem auto 1rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #f7f7f7;
+        font-size: 0.95rem;
+      }
+
+      .resume-print-hint__lead {
+        margin: 0 0 0.75rem;
+        line-height: 1.45;
+      }
+
+      .resume-print-hint__choices {
+        margin: 0 0 0.85rem;
+        padding: 0.65rem 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background: #fff;
+      }
+
+      .resume-print-hint__choices legend {
+        padding: 0 0.25rem;
+        font-size: 0.88rem;
+        font-weight: 700;
+      }
+
+      .resume-print-hint__choice {
+        display: flex;
+        align-items: baseline;
+        gap: 0.45rem;
+        margin: 0.35rem 0;
+        cursor: pointer;
+      }
+
+      .resume-print-hint__choice input {
+        margin: 0;
+      }
+
+      .resume-print-hint__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.65rem;
+      }
+
+      .resume-print-hint__btn {
+        font: inherit;
+        cursor: pointer;
+        padding: 0.4rem 0.75rem;
+        border-radius: 4px;
+        border: 1px solid color-mix(in srgb, var(--resume-accent, #0e7ab8) 45%, #999);
+        background: color-mix(in srgb, var(--resume-accent, #0e7ab8) 10%, #fff);
+        color: inherit;
+      }
+
+      .resume-print-hint__btn:hover {
+        background: color-mix(in srgb, var(--resume-accent, #0e7ab8) 18%, #fff);
+      }
+
+      .resume-print-hint__btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .resume-print-hint__btn--secondary {
+        background: #fff;
+      }
+
+      .resume-print-hint__note {
+        margin: 0.65rem 0 0;
+        font-size: 0.88rem;
+        line-height: 1.4;
+        color: #444;
+      }
+
+      .resume-sheet--one-page {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 2px dashed #ccc;
+        font-size: 11pt;
+      }
+
+      .trait-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem 0.5rem;
+        list-style: none;
+        margin: 0.65rem 0 0.5rem;
+        padding: 0;
+      }
+
+      .trait-pill {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.05rem;
+        padding: 0.35rem 0.65rem;
+        border-radius: 6px;
+        background: color-mix(in srgb, var(--resume-accent, #0e7ab8) 12%, white);
+        border: 1px solid color-mix(in srgb, var(--resume-accent, #0e7ab8) 35%, transparent);
+        line-height: 1.15;
+      }
+
+      .trait-pill__label {
+        font-weight: 700;
+        font-size: 0.92em;
+        color: color-mix(in srgb, var(--resume-accent, #0e7ab8) 85%, black);
+      }
+
+      .trait-pill__detail {
+        font-size: 0.78em;
+        opacity: 0.85;
+      }
+
+      .trait-line {
+        margin: 0.45rem 0 0.35rem;
+        font-size: 0.9em;
+        line-height: 1.35;
+        color: #333;
+      }
+
+      .skills-one-page,
+      .education-compact,
+      .experience-one-page-inline {
+        grid-column: 1 / -1;
+        margin: 5px 0 0 0;
+        font-size: 0.92em;
+        line-height: 1.4;
+      }
+
+      .experience-one-page-inline {
+        margin-top: 0.35rem;
+        padding-top: 0.45rem;
+        border-top: 1px solid #e8e8e8;
+      }
+
+      .section--skills-compact,
+      .section--education-compact {
+        padding-inline: 0.5rem;
+        margin-bottom: 0.35rem;
+      }
+
+      .resume-motivation {
+        max-width: 52rem;
+        margin: 2.5rem auto 2rem;
+        padding: 0 0.5rem;
+      }
+
+      .letter-sheet {
+        position: relative;
+        overflow: hidden;
+        padding: 2.25rem 2.5rem 2.75rem 2.85rem;
+        background: #fff;
+        border: 1px solid #e6e9eb;
+        border-radius: 3px;
+        box-shadow:
+          0 0 0 1px color-mix(in srgb, var(--resume-accent, #0e7ab8) 8%, transparent),
+          0 12px 28px color-mix(in srgb, var(--resume-accent, #0e7ab8) 6%, transparent);
+      }
+
+      .letter-sheet__accent {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 6px;
+        background: linear-gradient(
+          165deg,
+          var(--resume-accent, #0e7ab8) 0%,
+          color-mix(in srgb, var(--resume-accent, #0e7ab8) 55%, #fff) 55%,
+          color-mix(in srgb, var(--resume-accent, #0e7ab8) 18%, #fff) 100%
+        );
+      }
+
+      .letter-sheet__title {
+        margin: 0 0 1.25rem;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--resume-accent, #0e7ab8) 75%, #333);
+      }
+
+      .letter-masthead {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 1rem 1.5rem;
+        margin-bottom: 1.75rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #eceff1;
+      }
+
+      .letter-masthead__name {
+        margin: 0;
+        font-family: urbanist, "Atkinson", Helvetica, Arial, sans-serif;
+        font-size: 1.05rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        line-height: 1.2;
+        color: #1c1c1c;
+      }
+
+      .letter-masthead__role {
+        margin: 0.35rem 0 0;
+        font-size: 0.88rem;
+        font-weight: 500;
+        line-height: 1.35;
+        color: color-mix(in srgb, var(--resume-accent, #0e7ab8) 65%, #444);
+      }
+
+      .letter-masthead__contact {
+        font-size: 0.82rem;
+        line-height: 1.55;
+        color: #555;
+        text-align: right;
+      }
+
+      .letter-address {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 2rem;
+      }
+
+      .letter-address address {
+        font-style: normal;
+        max-width: 17rem;
+        padding: 0.85rem 1.1rem;
+        font-size: 0.92em;
+        line-height: 1.55;
+        color: #2a2a2a;
+        background: color-mix(in srgb, var(--resume-accent, #0e7ab8) 7%, #fafbfc);
+        border-left: 3px solid var(--resume-accent, #0e7ab8);
+        border-radius: 0 2px 2px 0;
+      }
+
+      .letter-body {
+        font-size: 11pt;
+        line-height: 1.65;
+        color: #222;
+        max-width: 40rem;
+      }
+
+      .letter-body,
+      .letter-body * {
+        font-family: "Atkinson", Georgia, "Times New Roman", serif;
+      }
+
+      .letter-body p {
+        margin: 0 0 0.95em;
+        orphans: 3;
+        widows: 3;
+      }
+
+      .letter-body p:first-of-type {
+        margin-top: 0;
+      }
+
+      .letter-body strong {
+        font-weight: 600;
+        color: #111;
+      }
+
+      .letter-body hr {
+        margin: 1.25em 0;
+        border: 0;
+        border-top: 1px solid #e0e4e7;
+      }
+
+      .skill-grid {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.55rem 0.65rem;
+        width: 100%;
+      }
+
+      .skill-grid--one-page {
+        gap: 0.45rem 0.55rem;
+      }
+
+      .section-heading-compact {
+        font-size: 1.05rem !important;
+        margin-block-end: 0.4rem !important;
+        padding-bottom: 0.15em !important;
+      }
+
+      .trait-pill--inline {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0;
+      }
+
+      .trait-pill--inline .trait-pill__detail {
+        display: inline;
+        font-weight: 500;
+        color: #333;
+        opacity: 1;
+      }
+
+      .skill-card {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 0.45rem 0.55rem 0.5rem;
+        background: #fafafa;
+        border-top: 3px solid var(--resume-accent, #333);
+        break-inside: avoid;
+      }
+
+      .skill-card__title {
+        font-size: 0.88em;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        margin: 0 0 0.35rem;
+        line-height: 1.2;
+        color: #222;
+      }
+
+      .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .skill-tags li {
+        font-size: 0.82em;
+        line-height: 1.25;
+        padding: 0.12rem 0.45rem;
+        border-radius: 999px;
+        background: #fff;
+        border: 1px solid #e0e0e0;
+      }
+
+      .skill-keywords {
+        margin: 0;
+        font-size: 0.88em;
+        line-height: 1.45;
+        color: #222;
+      }
+
       @media print {
-
-        /* Reset */
-        *,
-        *:before,
-        *:after,
-        *:first-letter,
-        p:first-line,
-        div:first-line,
-        blockquote:first-line,
-        li:first-line {
-          //color: #000 !important;
-          //background: transparent !important;
+        .resume-sheet,
+        .resume-sheet *,
+        .resume-motivation,
+        .resume-motivation * {
           box-shadow: none !important;
-          text-shadow: none !important;
         }
 
-        /* Content */
-        body>*:not(main) {
-          display: none;
+        .resume-print-hint,
+        .no-print,
+        .no-print * {
+          display: none !important;
         }
 
-        .container--sm {
-          max-width: 90%;
+        body[data-print-mode="full"] .resume-sheet--one-page,
+        body[data-print-mode="full"] .resume-motivation {
+          display: none !important;
         }
 
-        /* a[href]:after {
-            content: " ("attr(href) ")";
-          }
+        body[data-print-mode="one-page"] .resume-sheet--full,
+        body[data-print-mode="one-page"] .resume-motivation {
+          display: none !important;
+        }
 
-          abbr[title]:after {
-            content: " ("attr(title) ")";
-          } */
+        body[data-print-mode="letter"] .resume-sheet--full,
+        body[data-print-mode="letter"] .resume-sheet--one-page {
+          display: none !important;
+        }
 
+        .resume-sheet--one-page {
+          margin-top: 0;
+          padding-top: 0;
+          border-top: 0;
+        }
 
         @page {
-          size: auto;
-          margin: 5mm 5mm 5mm 5mm;
+          size: A4;
+          margin: 4mm;
+          padding-top: 0mm;
         }
 
         @page :first {
-          header {
-            margin: -100px;
-          }
+          margin-top: 0mm;
+          padding-top: 0;
         }
 
-        html {}
+        body[data-print-mode="one-page"] .resume-sheet--one-page > .header {
+          margin-bottom: 0.85rem;
+        }
+
+        .resume-sheet--full > .header .profile:not(.profile--limited) {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: var(--profile-max-lines, 3);
+          overflow: hidden;
+          line-height: 1.45;
+        }
+
+        .resume-sheet--full > .header .profile:not(.profile--limited) p {
+          margin-block: 0;
+          display: inline;
+        }
+
+        .resume-sheet--full > .header-main {
+          padding: 1rem 1.25rem;
+        }
+
+        .resume-sheet--full > .header h1 {
+          font-size: 1.65rem;
+        }
 
         * {
           color-adjust: exact !important;
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
-          border-color: #000 !important;
         }
 
         body {
-          padding: 0 11pt;
+          max-width: none;
+          width: 100%;
+          margin: 0;
+          padding: 0;
           font-size: 11pt;
-          color: #000;
-          background-color: none;
         }
 
-        a,
-        header a {
-          color: #000;
+        .page-break {
+          break-before: page;
         }
 
-        p,
-        blockquote {
-          orphans: 3;
-          widows: 3;
+        .resume-motivation {
+          max-width: none;
+          width: 100%;
+          margin: 0;
+          padding: 16mm 5mm 18mm 8mm;
+          box-sizing: border-box;
+        }
+
+        /* Sans encart adresse : en-tête en haut, corps centré sur la page (modèle lettre pro) */
+        .resume-motivation--centered {
+          min-height: 100vh;
+          min-height: 100dvh;
+          padding-top: 10mm;
+          padding-bottom: 14mm;
+        }
+
+        .resume-motivation--centered .letter-sheet {
+          display: flex;
+          flex-direction: column;
+          min-height: calc(100vh - 24mm);
+          min-height: calc(100dvh - 24mm);
+        }
+
+        .resume-motivation--centered .letter-masthead {
+          flex: 0 0 auto;
+        }
+
+        .resume-motivation--centered .letter-body {
+          flex: 1 1 auto;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          margin: 0;
+          padding: 6mm 0 4mm;
+        }
+
+        /* Adresse expéditeur en haut à droite, corps plus bas (courrier classique) */
+        .resume-motivation--classic {
+          min-height: 100vh;
+          padding-top: 8mm;
+        }
+
+        .resume-motivation--classic .letter-masthead {
+          margin-bottom: 0;
+          padding-bottom: 0;
+          border-bottom: none;
+        }
+
+        .resume-motivation--classic .letter-address {
+          margin-top: 0;
+          margin-bottom: 0;
+          min-height: 52mm;
+          align-items: flex-start;
+        }
+
+        .resume-motivation--classic .letter-body {
+          margin-top: 8mm;
+        }
+
+        .letter-sheet {
+          padding: 0 10mm 0 10mm;
+          border: none;
+          border-radius: 0;
+          box-shadow: none;
+        }
+
+        .letter-sheet__accent {
+          width: 3px;
+        }
+
+        .letter-masthead {
+          margin-bottom: 1.25rem;
+          padding-bottom: 0.65rem;
+          border-bottom-color: #ddd;
+        }
+
+        .letter-address {
+          margin-bottom: 0;
+        }
+
+        .letter-address address {
+          background: color-mix(in srgb, var(--resume-accent, #0e7ab8) 5%, #fff);
+          print-color-adjust: exact;
+        }
+
+        .letter-body {
+          max-width: none;
+        }
+
+        .page-avoid {
+          break-after: avoid;
         }
 
         blockquote,
@@ -247,120 +874,30 @@
 
         h1,
         h2,
-        h3,
-        caption,
-        figure {
+        h3 {
           page-break-after: avoid;
         }
 
-        .wrapper {
-          margin: 0 10pt;
-          max-width: none;
+        /* Focus/preuves : après expériences (ordre template) ; éviter un titre seul en bas de page */
+        .resume-sheet--full .section--focus {
+          break-before: auto;
+          page-break-before: auto;
         }
 
-        header {
-          background: none;
-        }
-
-        nav,
-        .breadcrumb {
-          display: none;
-        }
-
-        table th,
-        table td {
-          padding: 1px 5px;
-          border-width: 1px !important;
-          font-size: 75%;
-        }
-
-        h2,
-        h3 {
-          margin-top: 0 !important;
-          margin-bottom: 0 !important;
-        }
-
-        :not([class]) p:not([class]),
-        :not([class]) ol:not([class]),
-        :not([class]) ul:not([class]) {
-          margin-top: 0;
-          margin-bottom: 0.5em;
-        }
-
-        pre,
-        code {
-          overflow-x: auto;
-          white-space: pre-wrap;
-          white-space: -moz-pre-wrap !important;
-          white-space: -pre-wrap;
-          white-space: -o-pre-wrap;
-          word-wrap: break-word;
-          background: #fff;
-
-          break-inside: avoid;
-        }
-
-        figure {
-          padding: 0 !important;
-          border: none !important;
-        }
-
-        figure a {
-          display: block;
-        }
-
-        header {
-          //display: block !important;
-        }
-
-        .date {
-          display: block;
-          grid-column: initial;
-          grid-row: initial;
-          //justify-self: start !important;
-        }
-
-        .no-print,
-        .no-print * {
-          display: none !important;
-        }
-
-        .grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        }
-
-        .flex {
-          display: flex;
-          flex-direction: row;
-          flex-wrap: wrap;
-        }
-
-        .flex>* {
-          min-width: 150px;
-        }
-
-        .benchmark {
-          break-inside: avoid;
-        }
-
-        .counter {
-          display: grid;
-          align-items: center;
-          padding: 1em;
-          font-family: Futura;
-          border: 1px solid;
-        }
-
-        .page-break {
-          break-before: page;
-        }
-
-        .page-avoid {
+        .resume-sheet--full .section--focus > h2 {
           break-after: avoid;
+          page-break-after: avoid;
+        }
+
+        .resume-sheet--full .section--focus .focus {
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+
+        .resume-sheet .focus div {
+          border-color: #888;
         }
       }
-
 
       a {
         color: inherit;
@@ -369,30 +906,31 @@
       body {
         max-width: 55rem;
         margin-inline: auto;
-        margin-block: 0.5rem 2rem;
+        margin-block: 0 2rem;
 
         *[href*='bertrandkeller.info']::before,
-        *[href^='https://www.linkedin.com']::before {
+        .social-blog::before,
+        *[href^='https://www.linkedin.com']::before,
+        a[href^='tel:']::before,
+        .resume-contact-phone::before {
           display: inline-block;
           background-size: 1rem 1rem;
           width: 1rem;
           height: 1rem;
-
-          bottom: -6pt;
-          right: 2pt;
-
           margin-right: 4px;
           vertical-align: text-top;
         }
 
-        p[href^='mailto']::after {
-          content: '📧';
+        a[href^='tel:']::before,
+        .resume-contact-phone::before {
+          content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="%23555"><path d="M798-120q-125 0-247-54.5T329-329Q229-429 174.5-551T120-798q0-18 12-30t30-12h162q14 0 25 9.5t13 22.5l26 140q2 16-1 27t-11 19l-97 98q20 37 47.5 66.5T387-386q31 31 65 57.5t72 48.5l94-94q9-9 23.5-13.5T670-390l138 28q14 4 23 14.5t9 24.5v162q0 18-12 30t-30 12Z"/></svg>');
         }
 
-        p[href^='tel']::after {
-          content: '📞';
+        .resume-contact-phone {
+          color: inherit;
+          text-decoration: none;
         }
-
+        .social-blog::before,
         *[href*='bertrandkeller.info']::before {
           content: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 -960 960 960"  fill="%23e3e30"><path d="M838-65 720-183v89h-80v-226h226v80h-90l118 118-56 57ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 20-2 40t-6 40h-82q5-20 7.5-40t2.5-40q0-20-2.5-40t-7.5-40H654q3 20 4.5 40t1.5 40q0 20-1.5 40t-4.5 40h-80q3-20 4.5-40t1.5-40q0-20-1.5-40t-4.5-40H386q-3 20-4.5 40t-1.5 40q0 20 1.5 40t4.5 40h134v80H404q12 43 31 82.5t45 75.5q20 0 40-2.5t40-4.5v82q-20 2-40 4.5T480-80ZM170-400h136q-3-20-4.5-40t-1.5-40q0-20 1.5-40t4.5-40H170q-5 20-7.5 40t-2.5 40q0 20 2.5 40t7.5 40Zm34-240h118q9-37 22.5-72.5T376-782q-55 18-99 54.5T204-640Zm172 462q-18-34-31.5-69.5T322-320H204q29 51 73 87.5t99 54.5Zm28-462h152q-12-43-31-82.5T480-798q-26 36-45 75.5T404-640Zm234 0h118q-29-51-73-87.5T584-782q18 34 31.5 69.5T638-640Z"/></svg>');
         }
@@ -401,203 +939,120 @@
           content: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M8,72 L64,72 C68.418278,72 72,68.418278 72,64 L72,8 C72,3.581722 68.418278,-8.11624501e-16 64,0 L8,0 C3.581722,8.11624501e-16 -5.41083001e-16,3.581722 0,8 L0,64 C5.41083001e-16,68.418278 3.581722,72 8,72 Z' fill='%23007EBB'/%3E%3Cpath d='M62,62 L51.315625,62 L51.315625,43.8021149 C51.315625,38.8127542 49.4197917,36.0245323 45.4707031,36.0245323 C41.1746094,36.0245323 38.9300781,38.9261103 38.9300781,43.8021149 L38.9300781,62 L28.6333333,62 L28.6333333,27.3333333 L38.9300781,27.3333333 L38.9300781,32.0029283 C38.9300781,32.0029283 42.0260417,26.2742151 49.3825521,26.2742151 C56.7356771,26.2742151 62,30.7644705 62,40.051212 L62,62 Z M16.349349,22.7940133 C12.8420573,22.7940133 10,19.9296567 10,16.3970067 C10,12.8643566 12.8420573,10 16.349349,10 C19.8566406,10 22.6970052,12.8643566 22.6970052,16.3970067 C22.6970052,19.9296567 19.8566406,22.7940133 16.349349,22.7940133 Z M11.0325521,62 L21.769401,62 L21.769401,27.3333333 L11.0325521,27.3333333 L11.0325521,62 Z' fill='%23FFF'/%3E%3C/g%3E%3C/svg%3E");
         }
 
-        &>header {
-          display: flex;
-          //padding: 0.5rem;
-          flex-direction: row;
-          flex-wrap: wrap;
-
-          &>h1 {
-            margin-bottom: 0;
-            font-size: 2rem;
-            font-weight: bolder;
-            font-family: urbanist, "Atkinson", Arial, sans-serif;
-
-            flex: 1 0 auto;
-
-            /* Title, e.g., "Programmer" */
-            &>span {
-              font-size: 1.1rem;
-              font-weight: 300;
-            }
-          }
-
-          &>address {
-            flex: 1 0 auto;
-            align-self: end;
-
-            text-align: end;
-
-            font-style: normal;
-            font-size: 0.9rem;
-            line-height: 1.6;
-
-            &>* {
-              display: block;
-              white-space: pre;
-
-              &::after {
-                margin-inline-start: 0.5rem;
-
-                display: inline-block;
-
-                position: relative;
-                right: 0.5pt;
-              }
-
-            }
-          }
-        }
-
-        & .date {
+        .date {
           padding: 0 .4em;
           font-weight: 600;
           color: #fff;
-          background: #333;
+          background: var(--resume-accent, #333);
           border-radius: 4px;
-          box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 2px;
         }
 
-        &.text {
-          font-size: 90%;
-        }
-
-        & ul {
-          padding-left: 1em;
-        }
-
-        .m-0 {
-          margin: 0;
-        }
-
-        &>.header {
+        .resume-sheet > .header {
           display: grid;
           grid-template-columns: 100px 1fr;
           margin-bottom: 2em;
           border-bottom: 1px solid #555;
 
-          &>.subtitle {
+          & > .subtitle {
             display: flex;
             place-items: center;
             writing-mode: sideways-lr;
-            font-size: 2em;
+            font-size: 1.8em;
             color: #fff;
-            background: #000;
+            background: var(--resume-accent, #000);
             text-transform: uppercase;
             text-align: center;
             letter-spacing: 0.8em;
           }
 
-          &>div {
+          & > .header-main {
             padding: 1.5rem;
-
           }
 
           h1 {
-            padding: 0 0 1em;
-            grid-area: name;
+            padding: 0 0 0.5em;
+            font-size: 2rem;
+            font-weight: bolder;
+            line-height: 0.7;
           }
 
-          .profile,
-          address {
-            display: flex;
-            //flex-direction: column;
-            //border: 1px solid;
-            //padding: 1em;
-            //height: 100%;
+          h1 small {
+            font-size: 1rem;
           }
 
           .profile {
-            grid-area: work;
             flex-direction: column;
           }
 
+          .profile--limited {
+            display: -webkit-box;
+            margin-bottom: 1em;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: var(--profile-max-lines, 4);
+            overflow: hidden;
+            line-height: 1.45;
+          }
+
+          .profile--limited p {
+            margin-block: 0;
+            display: inline;
+          }
+
+          .profile--limited p:not(:last-child)::after {
+            content: " ";
+          }
+
           address {
-            grid-area: about;
             align-items: baseline;
           }
         }
 
-        &>main {
+        .resume-sheet > main {
           position: relative;
           display: grid;
           grid-template-columns: max-content 1fr;
-          row-gap: 0.75rem;
+          row-gap: 0;
+          padding: 0 8mm 0 4mm;
 
-
-          page-break-after: avoid;
-
-          .section-motivation {
-            position: unset;
-            padding-top: 50pt;
-            /*padding-bottom: 50pt;*/
-            font-size: 11pt;
-            z-index: 1;
-
-            * {
-              line-height: 1.6;
-              font-family: "Atkinson", "Georgia", Arial, sans-serif;
-            }
-
-            .section-address {
-              margin-bottom: 65pt;
-              overflow: hidden;
-            }
-
-            address {
-
-              width: max-content;
-              float: right;
-              font-style: normal;
-            }
-
-            hr {
-              display: flow-root;
-              height: 30pt;
-            }
-
-            p {
-              margin-bottom: 15pt;
-            }
-
-            .img-background {
-              position: absolute;
-              bottom: 0;
-              left: 50%;
-              max-width: 100%;
-              z-index: -1;
-              transform: translate(-50%, 160pt);
-            }
-          }
-
-          /* h2-level sections, e.g., "Summary", "Experience", or "Education" */
-          &>.section {
+          & > .section {
             grid-column: 1 / 3;
-
             width: 100%;
-
-            //display: grid;
-            grid-template-columns: subgrid;
-            justify-items: stretch;
-            align-items: start;
-
             row-gap: 0.75rem;
             column-gap: 1rem;
-
-            //border-block-start: 2pt solid #0E2181;
-            //padding-block-start: 0.75rem;
             padding-inline: 0.5rem;
             margin-inline: 0.25rem;
-
             line-height: 1.4;
-            page-break-after: avoid;
 
-            &.compétences .subsection,
-            &.skills .subsection {
-              display: grid;
-              grid-template-columns: 1fr 1fr;
-              margin: 0;
-              padding: 0;
+            &.section--skills {
+              display: block;
+              padding-bottom: 1em;
+
+              & > h2 {
+                margin-block-end: 0.5rem !important;
+              }
+
+              & > .subsection {
+                grid-column: 1 / -1;
+                border-top: 0;
+                padding-top: 0;
+                padding-bottom: 0.35rem;
+              }
+            }
+
+            &.section--experience > .subsection--experience {
+              grid-column: 1 / -1;
+              border-top: 1px solid #e5e5e5;
+              padding-top: 0.45rem;
+              padding-bottom: 0.85rem;
+            }
+
+            .resume-sheet--full &.section--experience > .subsection--experience:nth-child(5) {
+              margin-top: 4.5rem;
+              break-before: page;
+            }
+
+            &.section--experience > .subsection--experience:first-of-type {
+              border-top: 0;
             }
 
             .focus {
@@ -612,30 +1067,27 @@
                 border-radius: 2px;
                 box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 5px;
 
-                &>b {
+                & > b {
                   display: flex;
                   justify-content: space-between;
                   color: #fff;
-                  background: #111;
+                  background: var(--resume-accent, #111);
                 }
 
-                &>* {
+                & > * {
                   padding: 0.3em;
                 }
 
-                &>*:not(:last-child) {
+                & > *:not(:last-child) {
                   border-bottom: 1px solid #888;
                 }
               }
             }
 
-            &>h2 {
+            & > h2 {
               position: relative;
-              grid-column: 1 / span 1;
-              margin-block-start: 0.2rem !important;
               margin-block-end: 1.5rem !important;
-              padding: 0.5em 0;
-              line-height: 1;
+              padding: 0 0 0.5em 0;
               font-size: 1.5rem;
               font-weight: 800;
               text-transform: uppercase;
@@ -645,98 +1097,104 @@
                 position: absolute;
                 content: "";
                 width: 100px;
-                border-block-end: 2pt solid #333;
+                border-block-end: 2pt solid var(--resume-accent, #333);
                 left: 0;
                 bottom: -2px;
               }
             }
 
-            &>p,
-            &>.subsection {
+            &:not(:first-child) > h2 {
+              margin-top: 1rem;
+            }
+
+            & > p,
+            & > .subsection:not(.subsection--experience) {
               grid-column: 2 / 3;
             }
 
-            & .subsection:has(.clients) {
-              border-top: 1px solid;
-              padding-bottom: 0;
-            }
-
-            & .subsection:not(:first-of-type) {
-              padding-top: 1em;
-              border-top: 1px solid;
-            }
-
-            &>.subsection {
+            & > .subsection {
               display: grid;
               gap: 0.25rem;
               padding-bottom: 1em;
 
-              &>header {
-                display: grid;
-                grid-template-columns: max-content 1fr;
-                column-gap: 0.25rem;
+              & > header.experience-head {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: baseline;
+                gap: 0.25rem 0.5rem;
+                margin-bottom: 0.15rem;
 
-                &>h3 {
-                  grid-column: 1 / span 1;
-
-                  font-size: 1rem;
+                & > h3.experience-title {
+                  flex: 1 1 12rem;
+                  font-size: 1.1rem;
                   font-weight: bolder;
+                  margin: 0;
+                  line-height: 1.25;
                 }
 
-                &>span {
-                  grid-column: 1;
+                & .experience-company {
+                  font-weight: 500;
+                  font-size: 0.95em;
+                }
 
-                  font-weight: lighter;
-
-                  &>.focus {
-                    text-transform: lowercase;
-                  }
-
-                  &.date {
-                    grid-column: 2;
-                    grid-row: 1;
-                    justify-self: end;
-                  }
+                & > .date {
+                  margin-left: auto;
+                  font-size: 0.85em;
+                  flex-shrink: 0;
                 }
               }
 
-              &>ul {
+              & > ul {
                 padding-inline-start: 1rem;
               }
             }
           }
         }
+
+        .resume-sheet--one-page {
+          page-break-before: always;
+        }
+
+        .resume-sheet--one-page .header .profile p {
+          margin-bottom: 0.25em;
+          line-height: 1.35;
+        }
+
+        .resume-sheet--one-page .trait-pill {
+          padding: 0.25rem 0.5rem;
+        }
+
+        .resume-sheet--one-page main > .section > h2 {
+          margin-block-end: 0.5rem !important;
+        }
+
+        .experience-body--summary p {
+          margin-bottom: 0.35em;
+          line-height: 1.45;
+        }
+
+        .experience-body li {
+          margin-left: 5mm;
+        }
+
+        .resume-sheet--one-page .subsection--experience {
+          padding-bottom: 0.35rem;
+        }
+
+        .resume-sheet--one-page .experience-body--summary p {
+          margin-bottom: 0.2em;
+        }
       }
 
       @media screen and (max-width: 50rem) {
-        body {
-          main {
-            &>.section {
+        body .resume-sheet main > .section > h2 {
+          grid-column-end: span 2;
+        }
 
-              &>h2 {
-                grid-column-end: span 2;
-                justify-self: center;
-
-                font-size: 1.25rem;
-              }
-
-              &>p,
-              &>.subsection {
-                grid-column-start: 1;
-
-                &>header {
-                  &>h3 {
-                    grid-column-end: span 2;
-                  }
-
-                  &>span.date {
-                    grid-row: 2;
-                  }
-                }
-              }
-            }
-          }
+        body .resume-sheet main > .section > .subsection {
+          grid-column-start: 1;
         }
       }
-  </style>
+    </style>
   </body>
+</html>

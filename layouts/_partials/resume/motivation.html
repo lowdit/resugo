@@ -1,0 +1,46 @@
+{{ $page := . }}
+{{ $resume := $page.Params.resume }}
+{{ $letterPath := printf "/%sletter/" (strings.TrimSuffix "/" $page.File.Dir) }}
+{{ $letterPage := site.GetPage $letterPath }}
+{{ $motivation := $page.Params.motivation }}
+{{ if and (not $motivation) $letterPage }}
+  {{ $motivation = $letterPage.Params.motivation }}
+{{ end }}
+{{ $addrPage := $page }}
+{{ if $letterPage }}{{ $addrPage = $letterPage }}{{ end }}
+{{ $showAddress := and (or (isset $page.Parent.Params "address") (isset $addrPage.Params "address")) (not (eq $addrPage.Params.address false)) }}
+{{ $name := $resume.name | default $page.Params.name }}
+{{- with $motivation }}
+<div class="resume-motivation page-break{{ if not $showAddress }} resume-motivation--centered{{ else }} resume-motivation--classic{{ end }}">
+  <article class="letter-sheet" aria-label="{{ i18n "title-letter" }}">
+    <div class="letter-sheet__accent" aria-hidden="true"></div>
+    <h2 class="letter-sheet__title no-print">{{ i18n "title-letter" }}</h2>
+    <header class="letter-masthead">
+      <div class="letter-masthead__identity">
+        {{- with $name }}<p class="letter-masthead__name">{{ . }}</p>{{ end }}
+        {{- with $resume.job }}<p class="letter-masthead__role">{{ . }}</p>{{ end }}
+      </div>
+      {{- with $resume.social }}
+      <div class="letter-masthead__contact">
+        {{- with .phone }}{{ partial "resume/phone-link.html" $resume.social }}{{ end -}}
+        {{- with .blog }}
+        {{- if $resume.social.phone }}<br>{{ end -}}
+        <span class="social-blog">{{ replace . "https://" "" }}</span>
+        {{- end }}
+      </div>
+      {{- end }}
+    </header>
+    {{- if $showAddress }}
+    <div class="letter-address">
+      <address>
+        {{ (cond (not $addrPage.Params.address) $page.Parent.Params.address $addrPage.Params.address) | markdownify }}
+      </address>
+    </div>
+    {{- end }}
+    <div class="letter-body">
+      {{- $content := . | markdownify -}}
+      {{ partialCached "content.html" $content $content }}
+    </div>
+  </article>
+</div>
+{{ end }}

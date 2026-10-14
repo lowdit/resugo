@@ -1,0 +1,18 @@
+{{ $exp := .exp }}
+{{ $onePage := .onePage | default false }}
+{{ $body := $exp.text | default "" }}
+{{ if $onePage }}
+  {{ with $exp.textShort }}{{ $body = . }}{{ end }}
+{{ end }}
+{{ if eq (strings.TrimSpace ($body | plainify)) "" }}{{ $body = $exp.text | default "" }}{{ end }}
+<section class="subsection subsection--experience">
+  <header class="page-avoid experience-head">
+    <h3 class="experience-title">
+      {{ $exp.title }}
+      {{- with $exp.company }} · <span class="experience-company">{{ . }}</span>{{ end }}
+    </h3>
+    {{- with $exp.date }}<span class="date">{{ . }}</span>{{ end }}
+  </header>
+  <div class="text experience-body{{ if $onePage }} experience-body--summary{{ end }}">{{ $body | markdownify }}</div>
+  {{ with $exp.clients }}{{ if not $onePage }}<p class="clients"><strong>Clients :</strong> {{ delimit . " - " }}</p>{{ end }}{{ end }}
+</section>

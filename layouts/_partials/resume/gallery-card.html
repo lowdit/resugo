@@ -1,0 +1,33 @@
+{{/* Dict: page (Page) */}}
+{{- $p := .page -}}
+{{- $r := $p.Params.resume -}}
+{{- $accent := "#1e4d8c" -}}
+{{- with $r.accent -}}
+  {{- $accent = . -}}
+{{- end -}}
+{{- $job := $r.job | default $p.Description -}}
+{{- $name := $r.name | default $p.LinkTitle -}}
+<article class="resume-gallery-card">
+  <a class="resume-gallery-card__link" href="{{ $p.RelPermalink }}">
+    <div class="resume-gallery-card__visual" style="--resume-accent: {{ $accent }};">
+      {{- with $p.Params.thumbnail -}}
+        <img class="resume-gallery-card__img" src="{{ . }}" alt="" loading="lazy" decoding="async">
+      {{- else -}}
+        <span class="resume-gallery-card__initials" aria-hidden="true">
+          {{- with $r.name -}}
+            {{- range $i, $w := split . " " -}}
+              {{- if lt $i 2 -}}{{- substr $w 0 1 -}}{{- end -}}
+            {{- end -}}
+          {{- else -}}
+            CV
+          {{- end -}}
+        </span>
+      {{- end -}}
+    </div>
+    <div class="resume-gallery-card__body">
+      <h2 class="resume-gallery-card__title">{{ $p.LinkTitle }}</h2>
+      {{- with $job -}}<p class="resume-gallery-card__job">{{ . }}</p>{{- end -}}
+      {{- with $name -}}<p class="resume-gallery-card__name">{{ . }}</p>{{- end -}}
+    </div>
+  </a>
+</article>
