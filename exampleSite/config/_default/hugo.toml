@@ -1,0 +1,29 @@
+baseURL = ""
+title = "Resugo"
+defaultContentLanguage = "fr"
+
+# Dev/`hugo server` : thèmes résolus en local via `themes/` (symlinks).
+# La prod utilise `config/production/hugo.toml` (modules GitHub).
+theme = ["minigo", "resugo"]
+
+[params.lowdit]
+  logo = "logos/resugo.png"
+  faviconDir = "favicons/resugo"
+  siteProfile = "cv"
+  view = "cv-vitrine"
+  homeEyebrow = "CV · galerie"
+
+[[menus.main]]
+  name = "Accueil"
+  url = "/"
+  weight = 1
+[[menus.main]]
+  name = "Installation"
+  url = "/installation/"
+  weight = 2
+
+# Pas d'entrée « CV » : l'accueil est déjà la galerie complète des profils.
+# L'index /resume/ reste accessible directement.
+
+[markup.goldmark.renderer]
+  unsafe = true

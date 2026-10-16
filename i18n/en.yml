@@ -36,8 +36,12 @@ print-sheet-full: Detailed profile
 print-sheet-one-page: Executive summary
 print-sheet-letter: Cover letter
 print-action-one: Print selection
-print-action-all: One PDF — all sheets in order
-print-action-separate: Three PDFs — one dialog per sheet
+print-action-all:
+  one: "One PDF — the sheet in order"
+  other: "One PDF — all {{ .Count }} sheets in order"
+print-action-separate:
+  one: "One PDF — one dialog"
+  other: "{{ .Count }} PDFs — one dialog per sheet"
 print-separate-hint: "File name follows the page title (CV code moves between detailed profile and summary):"
 print-missing-sheet: Not available for this bundle
 print-title-bundle: bundle

@@ -17,6 +17,14 @@
     {{- $printJob := $page.Params.resume.job | default "" -}}
     {{- $printCvCode := $page.Params.resume.printCode | default "CV" -}}
     {{- $printLetterCode := $page.Params.resume.letterCode | default "LM" -}}
+    {{- /* Nombre de feuilles réellement présentes, pour les libellés d'action
+           (« tout en un PDF » / « un PDF par feuille ») : CV détaillé (toujours)
+           + synthèse (sauf skipOnePage) + lettre (si motivation présente). */ -}}
+    {{- $letterPath := printf "/%sletter/" (strings.TrimSuffix "/" $page.File.Dir) -}}
+    {{- $letterPage := site.GetPage $letterPath -}}
+    {{- $hasLetter := or $page.Params.motivation (and $letterPage $letterPage.Params.motivation) -}}
+    {{- $sheetCount := add 1 (cond $skipOnePage 0 1) -}}
+    {{- if $hasLetter }}{{ $sheetCount = add $sheetCount 1 }}{{ end -}}
     <nav
       class="resume-print-hint no-print"
       aria-label="{{ i18n "print-panel-title" }}"
@@ -46,8 +54,8 @@
       </fieldset>
       <div class="resume-print-hint__actions">
         <button type="button" class="resume-print-hint__btn" data-resume-print-action="one">{{ i18n "print-action-one" }}</button>
-        <button type="button" class="resume-print-hint__btn" data-resume-print-action="all">{{ i18n "print-action-all" }}</button>
-        <button type="button" class="resume-print-hint__btn resume-print-hint__btn--secondary" data-resume-print-action="separate">{{ i18n "print-action-separate" }}</button>
+        <button type="button" class="resume-print-hint__btn" data-resume-print-action="all">{{ i18n "print-action-all" $sheetCount }}</button>
+        <button type="button" class="resume-print-hint__btn resume-print-hint__btn--secondary" data-resume-print-action="separate">{{ i18n "print-action-separate" $sheetCount }}</button>
       </div>
       <p class="resume-print-hint__note" hidden data-resume-print-separate-note>
         {{ i18n "print-separate-hint" }}
