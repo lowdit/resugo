@@ -1,6 +1,10 @@
 # Hugo
 /public/
 /resources/
+exampleSite/public/
+exampleSite/resources/
+exampleSite/.hugo_build.lock
+exampleSite/themes/
 /assets/jsconfig.json
 hugo.log
 hugo_stats.json
