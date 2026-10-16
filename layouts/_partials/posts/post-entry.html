@@ -1,0 +1,15 @@
+{{/* Post entry pour listes de resumes/articles */}}
+<article class="post-entry">
+  <h2 class="post-entry-title">
+    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+  </h2>
+  <time class="post-entry-date" datetime="{{ .Date.Format "2006-01-02" }}">
+    {{ .Date.Format "2 January 2006" }}
+  </time>
+  {{ with .Description }}
+    <p class="post-entry-desc">{{ . }}</p>
+  {{ end }}
+  {{ with .Params.resume.summary }}
+    <p class="post-entry-summary">{{ . | markdownify }}</p>
+  {{ end }}
+</article>

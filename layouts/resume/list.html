@@ -1,3 +1,4 @@
+{{/* Section resume : liste classique (défaut) ou galerie si layout: gallery sur _index.md */}}
 {{ define "main" -}}
 {{- $layout := .Params.layout | default .Layout -}}
 {{- if eq $layout "gallery" -}}
