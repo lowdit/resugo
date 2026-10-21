@@ -692,6 +692,138 @@
         color: #222;
       }
 
+      /* CV administratif (resume.layout: classic) — polices courantes Windows (Word) */
+      .resume-sheet--classic,
+      .resume-sheet--classic *:not(.classic-entry__date) {
+        font-family: Calibri, "Segoe UI", Arial, sans-serif;
+      }
+
+      .resume-sheet--classic .classic-entry__date {
+        font-family: Consolas, "Courier New", monospace;
+      }
+
+      /* CV administratif (resume.layout: classic) — compact, sans bandeau latéral */
+      .resume-sheet--classic > .header {
+        display: block;
+        margin-bottom: 0.85rem;
+        border-left: 4px solid var(--resume-accent, #0e7ab8);
+        border-bottom: 1px solid color-mix(in srgb, var(--resume-accent, #0e7ab8) 35%, #ccc);
+      }
+
+      .resume-sheet--classic > .header .header-main {
+        padding: 0.35rem 0 0.5rem;
+      }
+
+      .resume-sheet--classic > .header h1 {
+        font-size: 1.35rem;
+        line-height: 1.25;
+        padding-bottom: 0.15em;
+      }
+
+      .resume-sheet--classic > .header h1 small {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: color-mix(in srgb, var(--resume-accent, #0e7ab8) 72%, #333);
+      }
+
+      .resume-sheet--classic .profile p {
+        margin: 0.15em 0;
+        font-size: 0.9rem;
+        line-height: 1.35;
+      }
+
+      .resume-sheet--classic > main {
+        display: block;
+        padding: 0;
+      }
+
+      .resume-sheet--classic main > .section {
+        padding-inline: 0;
+        margin-inline: 0;
+        line-height: 1.35;
+      }
+
+      .resume-sheet--classic main .section > h2 {
+        position: relative;
+        font-size: 1.08rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-block-end: 0.35rem !important;
+        margin-top: 0.65rem;
+        padding-bottom: 0.2em;
+        border-block-end: 1px solid #eee;
+      }
+
+      .resume-sheet--classic main .section > h2::after {
+        position: absolute;
+        content: "";
+        width: 3.5rem;
+        border-block-end: 2pt solid var(--resume-accent, #333);
+        left: 0;
+        bottom: -1px;
+      }
+
+      .resume-sheet--classic .section--education {
+        break-inside: auto;
+        page-break-inside: auto;
+      }
+
+      .resume-sheet--classic .section--education > h2 {
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+
+      .resume-sheet--classic .trait-pills,
+      .resume-sheet--classic .skill-tags {
+        display: none !important;
+      }
+
+      .resume-sheet--classic .resume-contact-phone::before {
+        display: none !important;
+        content: none !important;
+      }
+
+      .resume-sheet--classic .section--experience > .subsection--experience,
+      .resume-sheet--classic .subsection--classic {
+        border-top: 0;
+        padding: 0;
+        margin: 0;
+      }
+
+      .classic-entry {
+        margin: 0 0 0.45rem;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .classic-entry__date {
+        margin: 0 0 0.12rem;
+        font-size: 0.88rem;
+        line-height: 1.25;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.02em;
+        color: color-mix(in srgb, var(--resume-accent, #0e7ab8) 58%, #333);
+      }
+
+      .classic-entry__title {
+        margin: 0 0 0.08rem;
+        font-weight: 600;
+        font-size: 0.94rem;
+        line-height: 1.3;
+      }
+
+      .classic-entry__text {
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.32;
+      }
+
+      .classic-entry__text p {
+        margin: 0;
+      }
+
       @media print {
         .resume-sheet,
         .resume-sheet *,
@@ -886,6 +1018,14 @@
           page-break-after: avoid;
         }
 
+        h3 {
+          margin-block: 1em;
+        }
+
+        td {
+          font-size: 1.1em;
+        }
+
         /* Focus/preuves : après expériences (ordre template) ; éviter un titre seul en bas de page */
         .resume-sheet--full .section--focus {
           break-before: auto;
@@ -1054,7 +1194,7 @@
               padding-bottom: 0.85rem;
             }
 
-            .resume-sheet--full &.section--experience > .subsection--experience:nth-child(5) {
+            .resume-sheet--full:not(.resume-sheet--classic) &.section--experience > .subsection--experience:nth-child(5) {
               margin-top: 4.5rem;
               break-before: page;
             }
@@ -1111,8 +1251,17 @@
               }
             }
 
-            &:not(:first-child) > h2 {
-              margin-top: 1rem;
+            &:not(:first-child) {
+              &:has(.img) h2 {
+                page-break-before: always;
+              }
+              & > h2 {
+                margin-top: 1rem;
+              }
+            }
+
+            & > h3 {
+              margin-bottom: 10em;
             }
 
             & > p,
@@ -1136,7 +1285,6 @@
                   flex: 1 1 12rem;
                   font-size: 1.1rem;
                   font-weight: bolder;
-                  margin: 0;
                   line-height: 1.25;
                 }
 
@@ -1191,6 +1339,51 @@
 
         .resume-sheet--one-page .experience-body--summary p {
           margin-bottom: 0.2em;
+        }
+
+        .resume-sheet--classic,
+        .resume-sheet--classic *:not(.classic-entry__date) {
+          font-family: Calibri, "Segoe UI", Arial, sans-serif !important;
+        }
+
+        .resume-sheet--classic .classic-entry__date {
+          font-family: Consolas, "Courier New", monospace !important;
+        }
+
+        .resume-sheet--classic > .header {
+          margin-bottom: 0.45rem;
+        }
+
+        .resume-sheet--classic main .section > h2 {
+          margin-top: 0.45rem;
+        }
+
+        .resume-sheet--classic .section--education {
+          break-inside: auto;
+          page-break-inside: auto;
+        }
+
+        .resume-sheet--classic .section--education > h2 {
+          break-before: auto;
+          page-break-before: auto;
+        }
+
+        /* Éviter qu’un bloc Formation entier saute en page 2 faute de place */
+        .resume-sheet--classic .classic-entry {
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+
+        .resume-sheet--classic main .section--education .classic-entry {
+          margin-bottom: 0.3rem;
+        }
+
+        .resume-sheet--classic .section--experience > .subsection--experience {
+          padding-bottom: 0.15rem;
+        }
+
+        .resume-sheet--classic {
+          font-size: 10.5pt;
         }
       }
 

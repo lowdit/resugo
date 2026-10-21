@@ -1,0 +1,39 @@
+{{- /* Diagramme « Comment je pilote un produit avec l'IA » généré depuis des données texte.
+       Aucune image : HTML/CSS, texte réel, lisible et imprimable. */ -}}
+{{- $d := .data -}}
+{{- if $d -}}
+<figure style="margin:1.5em 0;padding:0">
+  <div style="background:#f5ece1;border-radius:14px;padding:18px 20px 14px;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#1c1c1c;line-height:1.3">
+
+    <div style="font-size:1.12em;font-weight:800;margin-bottom:14px">{{ $d.titre }}</div>
+
+    <div style="font-size:0.7em;letter-spacing:0.09em;text-transform:uppercase;color:#b4552d;font-weight:800;margin-bottom:6px">Ce que je vise</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+      {{- range $d.vise }}
+      <span style="flex:1 1 0;min-width:120px;text-align:center;padding:6px 10px;border:1px solid #dfb08a;border-radius:999px;background:#fbf3ea;font-size:0.82em">{{ . }}</span>
+      {{- end }}
+    </div>
+
+    <div style="font-size:0.7em;letter-spacing:0.09em;text-transform:uppercase;color:#b4552d;font-weight:800;margin-bottom:6px">Comment je travaille avec l'IA</div>
+    <div style="display:flex;align-items:stretch;margin-bottom:4px">
+      {{- range $i, $e := $d.etapes }}
+      {{- if $i }}<div aria-hidden="true" style="align-self:center;padding:0 5px;color:#2b4c7e;font-weight:800;font-size:1.1em">→</div>{{ end }}
+      <div style="flex:1 1 0;min-width:0;border:1.5px solid #2b4c7e;border-radius:6px;overflow:hidden;background:#fff">
+        <div style="background:#2b4c7e;color:#fff;font-weight:700;text-align:center;padding:4px 5px;font-size:0.85em">{{ $e.titre }}</div>
+        <div style="padding:6px 7px;font-size:0.76em;text-align:center">
+          {{- range $e.lignes }}<div>{{ . }}</div>{{ end }}
+        </div>
+      </div>
+      {{- end }}
+    </div>
+    <div style="text-align:center;font-size:0.72em;color:#7a6a5c;margin-bottom:14px">↻ à chaque incrément</div>
+
+    <div style="display:flex;gap:10px;align-items:baseline;background:#2b4c7e;color:#fff;border-radius:8px;padding:8px 12px;font-size:0.8em">
+      <div style="color:#f0a882;font-weight:800;white-space:nowrap">Ce que j'évite</div>
+      <div>{{ delimit $d.eviter " · " }}</div>
+    </div>
+
+    <div style="text-align:center;font-style:italic;font-size:0.78em;color:#5c4f44;margin-top:10px">{{ $d.legende }}</div>
+  </div>
+</figure>
+{{- end -}}

@@ -1,0 +1,20 @@
+{{/* CV classique : date au-dessus, puis intitulé et description (Word / copier-coller). */}}
+{{ $title := .title | default "" }}
+{{ $date := .date | default "" }}
+{{ $company := .company | default "" }}
+{{ $body := .text | default "" }}
+<div class="classic-entry">
+  {{- with $date -}}
+  <p class="classic-entry__date">{{ . }}</p>
+  {{- end -}}
+  {{- if $title -}}
+  <p class="classic-entry__title">
+    {{ $title }}{{- with $company -}} — {{ . }}{{- end -}}
+  </p>
+  {{- else if $company -}}
+  <p class="classic-entry__title">{{ $company }}</p>
+  {{- end -}}
+  {{- if $body -}}
+  <div class="classic-entry__text">{{ $body | markdownify }}</div>
+  {{- end -}}
+</div>

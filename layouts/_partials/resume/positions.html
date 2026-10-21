@@ -1,0 +1,21 @@
+{{- /* Tableau « Postes et repères » rendu depuis une liste de textes.
+       Données attendues : period, organisation, role, markers. */ -}}
+{{- $items := . -}}
+<table style="width:100%;border-collapse:collapse;font-size:0.82em;line-height:1.35">
+  <thead>
+    <tr style="text-align:left;border-bottom:2px solid #2b4c7e">
+      <th style="padding:4px 6px">Période</th>
+      <th style="padding:4px 6px">Organisation · rôle</th>
+      <th style="padding:4px 6px">Repères</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{- range $i, $p := $items }}
+    <tr{{ if lt (add $i 1) (len $items) }} style="border-bottom:1px solid #e6dccf"{{ end }}>
+      <td style="padding:4px 6px;white-space:nowrap">{{ $p.period }}</td>
+      <td style="padding:4px 6px">{{ with $p.organisation }}{{ . }}{{ with $p.role }} · {{ . }}{{ end }}{{ else }}{{ $p.role }}{{ end }}</td>
+      <td style="padding:4px 6px">{{ $p.markers }}</td>
+    </tr>
+    {{- end }}
+  </tbody>
+</table>

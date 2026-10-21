@@ -1,0 +1,27 @@
+{{- /* Frise « Ce que chaque étape m'a appris » générée depuis des données texte.
+       SVG inline : la géométrie est fixe, le contenu vient du texte. */ -}}
+{{- $d := .data -}}
+{{- $items := $d.items -}}
+{{- $n := len $items -}}
+{{- $step := 54 -}}
+{{- $h := add 78 (add (mul (sub $n 1) $step) 40) -}}
+<figure style="margin:1.5em 0;padding:0">
+  <svg viewBox="0 0 760 {{ $h }}" width="100%" role="img" aria-labelledby="frise-titre frise-desc" style="display:block;max-width:760px;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif">
+    <title id="frise-titre">{{ $d.titre }}</title>
+    <desc id="frise-desc">{{ $d.description }}</desc>
+    <rect x="0" y="0" width="760" height="{{ $h }}" rx="14" fill="#f5ece1"/>
+    <text x="24" y="36" font-size="20" font-weight="800" fill="#1c1c1c">{{ $d.titre }}</text>
+    <line x1="150" y1="78" x2="150" y2="{{ add 78 (mul (sub $n 1) $step) }}" stroke="#2b4c7e" stroke-width="2"/>
+    {{- range $i, $it := $items }}
+    {{- $y := add 78 (mul $i $step) }}
+    <text x="24" y="{{ $y }}" dominant-baseline="middle" font-size="13.5" font-weight="700" fill="#b4552d">{{ $it.periode }}</text>
+    {{- if eq $i (sub $n 1) }}
+    <circle cx="150" cy="{{ $y }}" r="9" fill="#b4552d" stroke="#f5ece1" stroke-width="3"/>
+    {{- else }}
+    <circle cx="150" cy="{{ $y }}" r="7" fill="#2b4c7e" stroke="#f5ece1" stroke-width="3"/>
+    {{- end }}
+    <text x="172" y="{{ $y }}" dominant-baseline="middle" font-size="15" font-weight="700" fill="#1c1c1c">{{ $it.titre }}</text>
+    <text x="172" y="{{ add $y 17 }}" dominant-baseline="middle" font-size="12.5" fill="#5c4f44">{{ $it.lieux }}</text>
+    {{- end }}
+  </svg>
+</figure>

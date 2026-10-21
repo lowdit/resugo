@@ -1,11 +1,12 @@
 {{ $page := .Page }}
 {{ $onePage := .onePage | default false }}
 {{ $resume := $page.Params.resume }}
+{{ $classic := eq ($resume.layout | default "") "classic" }}
 {{ $summary := $resume.summary }}
 {{ if and $onePage $resume.summaryShort }}{{ $summary = $resume.summaryShort }}{{ end }}
-<div class="resume-sheet{{ if $onePage }} resume-sheet--one-page{{ else }} resume-sheet--full{{ end }}">
+<div class="resume-sheet{{ if $onePage }} resume-sheet--one-page{{ else }} resume-sheet--full{{ end }}{{ if $classic }} resume-sheet--classic{{ end }}">
   <header class="header">
-    <div class="subtitle" aria-hidden="true"></div>
+    <div class="subtitle" aria-hidden="true"{{ if $classic }} hidden{{ end }}></div>
     <div class="header-main">
       <h1>
         {{ $resume.name }}
@@ -29,6 +30,7 @@
       </ul>
       {{- end }}
       {{- end }}
+      {{- if not $classic }}
       <address>
         {{- with $resume.social.phone }}
         {{ partial "resume/phone-link.html" $resume.social }} &nbsp; &nbsp;
@@ -40,6 +42,7 @@
         <span href="{{ . }}">{{ replace . "https://www.linkedin.com/" "" }}</span>
         {{- end }}
       </address>
+      {{- end }}
     </div>
   </header>
   <main class="content">
@@ -84,6 +87,7 @@
         <strong>Formation :</strong>
         {{ .title }}, {{ .company }}{{ with .date }} ({{ . }}){{ end }}
         {{- with .text }} — {{ . | markdownify | plainify }}{{ end }}
+        {{ with .img }}<div class="img"><img src="{{ delimit (first 1 (split . " | ")) "" }}" alt="{{ delimit (first 2 (split . " | ")) "" }}"></a></div>{{ end }}
       </p>
       {{- end }}
     </article>
@@ -115,7 +119,7 @@
           {{- end }}
         {{- end }}
         {{- range $expMain }}
-          {{ partial "resume/experience-entry.html" (dict "exp" . "onePage" $onePage) }}
+          {{ partial "resume/experience-entry.html" (dict "exp" . "onePage" $onePage "classic" $classic) }}
         {{- end }}
         {{- if and $onePage (gt (len $expListed) 0) }}
         <p class="experience-one-page-inline">
@@ -144,15 +148,26 @@
             </div>
             {{ end }}
           </div>
+          {{ else if .why }}
+          {{ partial "resume/why.html" .why }}
+          {{ else if .diagram }}
+          <div class="text">{{ partial "resume/diagram.html" .diagram }}</div>
+          {{ else if .positions }}
+          <div class="text">{{ partial "resume/positions.html" .positions }}</div>
+          {{ else if and $classic (or $isEducation $isExperience) }}
+          <section class="subsection subsection--classic{{ if $isEducation }} subsection--classic-formation{{ end }}">
+            {{ partial "resume/classic-entry.html" (dict "title" .title "date" .date "company" .company "text" .text) }}
+          </section>
           {{ else }}
           {{ $body := .text | default "" }}
           {{ if eq (strings.TrimSpace ($body | plainify)) "" }}{{ $body = .text | default "" }}{{ end }}
           <header class="page-avoid experience-head">
-            {{ if .title }}<h3>{{ .title }}</h3>{{ end }}
+            {{ if .title }}<h3 class="experience-title">{{ .title }}</h3>{{ end }}
             {{- with .date }}<span class="date">{{ . }}</span>{{ end }}
             {{- with .company }}<span class="experience-company"><em>{{ . }}</em></span>{{ end }}
           </header>
           <div class="text">{{ $body | markdownify }}</div>
+          {{ with .img }}<div class="img"><img src="{{ delimit (first 1 (split . " | ")) "" }}" alt="{{ delimit (first 2 (split . " | ")) "" }}"></a></div>{{ end }}
           {{ end }}
         </section>
         {{- end }}

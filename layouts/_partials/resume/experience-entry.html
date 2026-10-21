@@ -1,5 +1,11 @@
 {{ $exp := .exp }}
 {{ $onePage := .onePage | default false }}
+{{ $classic := .classic | default false }}
+{{ if $classic }}
+<section class="subsection subsection--experience subsection--classic">
+  {{ partial "resume/classic-entry.html" (dict "title" $exp.title "date" $exp.date "company" $exp.company "text" $exp.text) }}
+</section>
+{{ else }}
 {{ $body := $exp.text | default "" }}
 {{ if $onePage }}
   {{ with $exp.textShort }}{{ $body = . }}{{ end }}
@@ -13,6 +19,20 @@
     </h3>
     {{- with $exp.date }}<span class="date">{{ . }}</span>{{ end }}
   </header>
-  <div class="text experience-body{{ if $onePage }} experience-body--summary{{ end }}">{{ $body | markdownify }}</div>
+  {{ if $exp.diagram }}
+  <div class="text experience-body{{ if $onePage }} experience-body--summary{{ end }}">
+    {{ partial "resume/diagram.html" $exp.diagram }}
+  </div>
+  {{ else if $exp.positions }}
+  <div class="text experience-body{{ if $onePage }} experience-body--summary{{ end }}">
+    {{ partial "resume/positions.html" $exp.positions }}
+  </div>
+  {{ else }}
+  <div class="text experience-body{{ if $onePage }} experience-body--summary{{ end }}"> 
+    {{ with $exp.img }}<div class="img"><img src="{{ delimit (first 1 (split . " | ")) "" }}" alt="{{ delimit (first 2 (split . " | ")) "" }}"></a></div>{{ end }}
+    {{ $body | markdownify }}
+  </div>
+  {{ end }}
   {{ with $exp.clients }}{{ if not $onePage }}<p class="clients"><strong>Clients :</strong> {{ delimit . " - " }}</p>{{ end }}{{ end }}
 </section>
+{{ end }}

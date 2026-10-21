@@ -1,0 +1,10 @@
+{{- /* Aiguillage des diagrammes générés depuis du texte.
+       Données attendues : type (ia | parcours) + les champs du diagramme correspondant. */ -}}
+{{- $d := . -}}
+{{- with $d.type -}}
+  {{- if eq . "ia" -}}
+    {{- partial "resume/diagram-ia.html" (dict "data" $d) -}}
+  {{- else if eq . "parcours" -}}
+    {{- partial "resume/diagram-parcours.html" (dict "data" $d) -}}
+  {{- end -}}
+{{- end -}}
