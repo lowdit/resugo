@@ -35,4 +35,6 @@ Puis `hugo server` : vos profils se construisent depuis `content/resume/`.
 
 ## GitHub Pages (votre site)
 
+**Base URL org Lowdit (cible)** : `https://lowdit.github.io/resugo/` — voir `docs/GITHUB-PAGES.md` à la racine du dépôt Resugo.
+
 Le workflow construit `exampleSite/` par défaut ; passez à `.` dans `.github/hugo-site-dir` si votre `content/` est à la racine.
