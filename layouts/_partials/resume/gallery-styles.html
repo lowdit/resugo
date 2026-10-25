@@ -1,0 +1,8 @@
+{{/* Styles de la galerie CV, inlinés depuis les assets du thème.
+     Autonome : ne dépend ni de la coque Minigo ni d'un partial catalog/*. */}}
+{{- with resources.Get "css/components/resume-gallery.css" -}}
+{{- $css := . | minify -}}
+<style>
+{{ $css.Content | safeCSS }}
+</style>
+{{- end -}}

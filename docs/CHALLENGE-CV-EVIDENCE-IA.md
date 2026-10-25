@@ -1,6 +1,6 @@
 # Challenge — CV « Ère IA » (Resugo Evidence)
 
-> Statut : cadrage v0 — 2026-10-19 · incrément `P-resugo-cv-ere-ia-stackr-01` (approuvé) · affine `P-resugo-evidence-stackr-01` (proposé).
+> Statut : cadrage v0 — 2026-10-19 · incrément `P-resugo-cv-ere-ia-stackr-01` (approuvé) · affine `P-resugo-evidence-stackr-01` (approuvé 2026-10-25).
 > Pilote : candidature Product Manager Stackr — `bertrandkeller.github.io/content/resume/stackr-product-manager/index.md` (draft).
 
 ## 1. Problème
@@ -142,6 +142,10 @@ Lecture : ce sont **deux angles** (IA / classique) × **deux longueurs** (long /
 | B — évolution Resugo | Parcours unique en données (`data/` ou fichier partagé) + paramètre `angle: ia \| classique` ; les layouts composent les quatre sorties | Une seule source de faits, réutilisable pour toutes les candidatures | Incrément Resugo à cadrer, layouts à modifier |
 
 Recommandation : A pour Stackr (version classique en complément, utile pour les logiciels de tri), B comme incrément Resugo séparé ensuite.
+
+### Composant `posture` (idée 2026-10-25)
+
+Annexe **personnelle** (page supplémentaire à l’impression) : fit à l’offre, lacunes, plan 30/60/90 j — **documenter le profil**, **pas envoyée** avec la candidature sauf opt-in. Spec : [`IDEES-EVOLUTION.md`](./IDEES-EVOLUTION.md).
 
 ## 7. Prochaines étapes
 

@@ -1,0 +1,6 @@
+{{- $d := .Page.Params.diagrammes -}}
+{{- with $d -}}
+  {{- with .ia -}}
+    {{- partial "resume/diagram-ia.html" (dict "data" .) -}}
+  {{- end -}}
+{{- end -}}

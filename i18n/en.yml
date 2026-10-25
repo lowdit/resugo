@@ -29,12 +29,33 @@ nav-main: main
 nav-mobile: main
 nav-search: search
 title-letter: Cover Letter
+resume-gallery-heading: Curricula
 print-panel-title: Print
 print-panel-intro: Pick one sheet or combine them. Preview (Ctrl+P) without using the panel prints the full bundle.
 print-one-document: Single document
 print-sheet-full: Detailed profile
 print-sheet-one-page: Executive summary
 print-sheet-letter: Cover letter
+print-sheet-posture: Posture report (appendix)
+title-posture: Self-report — profile vs role
+posture-annexe-hint: Personal appendix — not included in the default application bundle (print via “Posture report”).
+posture-updated: "Updated:"
+posture-exec-summary: Executive summary
+posture-forces: Verifiable strengths
+posture-gaps: Acknowledged gaps and cruise target
+posture-plan: Action plan if hired (hypothesis)
+posture-j30: 30 days
+posture-j60: 60 days
+posture-j90: 90 days
+posture-interview-notes: Interview notes (internal)
+posture-say: Say
+posture-avoid: Avoid
+posture-col-theme: Theme
+posture-col-level: Level
+posture-col-proof: Evidence
+posture-col-now: Now
+posture-col-target: Target
+posture-col-horizon: Horizon
 print-action-one: Print selection
 print-action-all:
   one: "One PDF — the sheet in order"

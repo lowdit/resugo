@@ -9,6 +9,7 @@ theme = ["minigo", "resugo"]
 [params.lowdit]
   logo = "logos/resugo.png"
   faviconDir = "favicons/resugo"
+  socialImage = "/assets/social/twittercard-default.png"
   siteProfile = "cv"
   view = "cv-vitrine"
   homeEyebrow = "CV · galerie"

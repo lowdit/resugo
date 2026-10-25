@@ -29,12 +29,33 @@ nav-main: principale
 nav-mobile: principale
 nav-search: search
 title-letter: Lettre de motivation
+resume-gallery-heading: Curricula
 print-panel-title: Imprimer
 print-panel-intro: Choisissez un document ou regroupez les feuilles. L’aperçu (Ctrl+P) sans bouton imprime tout le dossier.
 print-one-document: Un seul document
 print-sheet-full: Parcours détaillé
 print-sheet-one-page: Synthèse
 print-sheet-letter: Lettre de motivation
+print-sheet-posture: Reporting posture (annexe)
+title-posture: Auto-reporting — profil et offre
+posture-annexe-hint: Annexe personnelle — non incluse dans le dossier candidature par défaut (imprimer via « Reporting posture »).
+posture-updated: "Mise à jour :"
+posture-exec-summary: Synthèse exécutive
+posture-forces: Atouts vérifiables
+posture-gaps: Écarts assumés et cible de croisière
+posture-plan: Plan d’action si embauche (hypothèse)
+posture-j30: 30 jours
+posture-j60: 60 jours
+posture-j90: 90 jours
+posture-interview-notes: Notes entretien (interne)
+posture-say: À dire
+posture-avoid: À éviter
+posture-col-theme: Thème
+posture-col-level: Niveau
+posture-col-proof: Repère
+posture-col-now: Aujourd’hui
+posture-col-target: Croisière
+posture-col-horizon: Délai
 print-action-one: Imprimer la sélection
 print-action-all:
   one: "Un PDF — la feuille à la suite"

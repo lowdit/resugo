@@ -10,6 +10,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="canonical" href="{{ $page.Permalink }}">
     <title>{{ $page.Params.resume.name }} — {{ $page.Params.resume.job }}</title>
+    {{- with $page.Description -}}
+    <meta name="description" content="{{ . | plainify }}">
+    {{- end -}}
+    {{ partial "lowdit/social-meta.html" $page }}
   </head>
   <body style="--resume-accent: {{ $accent }};">
     {{ if $page.Params.resume }}
@@ -17,12 +21,21 @@
     {{- $printJob := $page.Params.resume.job | default "" -}}
     {{- $printCvCode := $page.Params.resume.printCode | default "CV" -}}
     {{- $printLetterCode := $page.Params.resume.letterCode | default "LM" -}}
+    {{- $printPostureCode := $page.Params.resume.postureCode | default "REP" -}}
     {{- /* Nombre de feuilles réellement présentes, pour les libellés d'action
            (« tout en un PDF » / « un PDF par feuille ») : CV détaillé (toujours)
            + synthèse (sauf skipOnePage) + lettre (si motivation présente). */ -}}
     {{- $letterPath := printf "/%sletter/" (strings.TrimSuffix "/" $page.File.Dir) -}}
     {{- $letterPage := site.GetPage $letterPath -}}
     {{- $hasLetter := or $page.Params.motivation (and $letterPage $letterPage.Params.motivation) -}}
+    {{- $postureData := $page.Params.posture -}}
+    {{- if not $postureData -}}
+      {{- with $page.Resources.GetMatch "posture.yaml" -}}
+        {{- $raw := .Content | transform.Unmarshal -}}
+        {{- $postureData = index $raw "posture" -}}
+      {{- end -}}
+    {{- end -}}
+    {{- $hasPosture := and $postureData (ne ($postureData.enabled | default true) false) (ne ($postureData.print | default true) false) -}}
     {{- $sheetCount := add 1 (cond $skipOnePage 0 1) -}}
     {{- if $hasLetter }}{{ $sheetCount = add $sheetCount 1 }}{{ end -}}
     <nav
@@ -32,6 +45,7 @@
       data-print-job="{{ $printJob }}"
       data-print-cv-code="{{ $printCvCode }}"
       data-print-letter-code="{{ $printLetterCode }}"
+      data-print-posture-code="{{ $printPostureCode }}"
       data-print-bundle-label="{{ i18n "print-title-bundle" }}"
     >
       <p class="resume-print-hint__lead"><strong>{{ i18n "print-panel-title" }}</strong> — {{ i18n "print-panel-intro" }}</p>
@@ -51,6 +65,12 @@
           <input type="radio" name="resume-print-sheet" value="letter">
           <span>{{ i18n "print-sheet-letter" }}</span>
         </label>
+        {{- if $hasPosture }}
+        <label class="resume-print-hint__choice" data-resume-print-option="posture">
+          <input type="radio" name="resume-print-sheet" value="posture">
+          <span>{{ i18n "print-sheet-posture" }}</span>
+        </label>
+        {{- end }}
       </fieldset>
       <div class="resume-print-hint__actions">
         <button type="button" class="resume-print-hint__btn" data-resume-print-action="one">{{ i18n "print-action-one" }}</button>
@@ -67,10 +87,11 @@
     {{ partial "resume/sheet.html" (dict "Page" $page "onePage" true) }}
     {{ end }}
     {{ partial "resume/motivation.html" $page }}
+    {{ partial "resume/posture.html" (dict "Page" $page) }}
     {{ end }}
     <script>
       (function () {
-        var MODES = ["full", "one-page", "letter"];
+        var MODES = ["full", "one-page", "letter", "posture"];
         var printNav = document.querySelector(".resume-print-hint");
         var originalTitle = document.title;
         var separateActive = false;
@@ -82,6 +103,7 @@
           if (mode === "full") return document.querySelector(".resume-sheet--full");
           if (mode === "one-page") return document.querySelector(".resume-sheet--one-page");
           if (mode === "letter") return document.querySelector(".resume-motivation");
+          if (mode === "posture") return document.querySelector(".resume-posture");
           return null;
         }
 
@@ -131,6 +153,7 @@
           var job = parts.job;
           var cv = printNav.getAttribute("data-print-cv-code") || "CV";
           var lm = printNav.getAttribute("data-print-letter-code") || "LM";
+          var rep = printNav.getAttribute("data-print-posture-code") || "REP";
           var bundle =
             printNav.getAttribute("data-print-bundle-label") || "dossier";
 
@@ -142,6 +165,9 @@
           }
           if (mode === "letter" && name && job) {
             return name + TITLE_SEP + lm + TITLE_SEP + job;
+          }
+          if (mode === "posture" && name && job) {
+            return name + TITLE_SEP + rep + TITLE_SEP + job;
           }
           if (mode === "all" && name && job) {
             return name + TITLE_SEP + job + TITLE_SEP + bundle;
@@ -376,14 +402,18 @@
 
       .resume-print-hint__choice {
         display: flex;
-        align-items: baseline;
+        align-items: center;
         gap: 0.45rem;
+        min-height: 1.5rem;
         margin: 0.35rem 0;
         cursor: pointer;
       }
 
       .resume-print-hint__choice input {
+        inline-size: 1.5rem;
+        block-size: 1.5rem;
         margin: 0;
+        flex: none;
       }
 
       .resume-print-hint__actions {
@@ -489,10 +519,140 @@
         margin-bottom: 0.35rem;
       }
 
-      .resume-motivation {
+      .resume-motivation,
+      .resume-posture {
         max-width: 52rem;
         margin: 2.5rem auto 2rem;
         padding: 0 0.5rem;
+      }
+
+      .resume-posture--annexe {
+        border-top: 3px dashed color-mix(in srgb, var(--resume-accent, #0e7ab8) 35%, #ccc);
+        padding-top: 0.5rem;
+      }
+
+      .posture-sheet__badge {
+        margin: 0 0 0.75rem;
+        padding: 0.35rem 0.65rem;
+        font-size: 0.78rem;
+        line-height: 1.35;
+        background: #f4f6f9;
+        border-left: 3px solid var(--resume-accent, #0e7ab8);
+        color: #444;
+      }
+
+      .posture-sheet {
+        position: relative;
+        padding: 2rem 2.25rem 2.5rem 2.5rem;
+        background: #fff;
+        border: 1px solid #e6e9eb;
+        border-radius: 3px;
+        box-shadow:
+          0 0 0 1px color-mix(in srgb, var(--resume-accent, #0e7ab8) 8%, transparent),
+          0 12px 28px color-mix(in srgb, var(--resume-accent, #0e7ab8) 6%, transparent);
+      }
+
+      .posture-masthead__eyebrow {
+        margin: 0 0 0.35rem;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--resume-accent, #0e7ab8) 75%, #333);
+      }
+
+      .posture-masthead__title {
+        margin: 0 0 0.25rem;
+        font-size: 1.35rem;
+        line-height: 1.2;
+      }
+
+      .posture-masthead__ref,
+      .posture-masthead__date {
+        margin: 0.15rem 0 0;
+        font-size: 0.88rem;
+        color: #555;
+      }
+
+      .posture-lead {
+        margin: 1.25rem 0;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        line-height: 1.45;
+        background: color-mix(in srgb, var(--resume-accent, #0e7ab8) 6%, #fff);
+        border-left: 4px solid var(--resume-accent, #0e7ab8);
+      }
+
+      .posture-lead p {
+        margin: 0;
+      }
+
+      .posture-block {
+        margin: 1.35rem 0 0;
+      }
+
+      .posture-block h3 {
+        margin: 0 0 0.5rem;
+        font-size: 0.95rem;
+        color: var(--resume-accent, #0e7ab8);
+      }
+
+      .posture-block h4 {
+        margin: 0.75rem 0 0.35rem;
+        font-size: 0.85rem;
+      }
+
+      .posture-block ul {
+        margin: 0 0 0.5rem;
+        padding-left: 1.15rem;
+        font-size: 0.88rem;
+        line-height: 1.38;
+      }
+
+      .posture-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+        line-height: 1.35;
+      }
+
+      .posture-table th,
+      .posture-table td {
+        text-align: left;
+        vertical-align: top;
+        padding: 0.4rem 0.45rem;
+        border-bottom: 1px solid #e8ecef;
+      }
+
+      .posture-table th {
+        font-weight: 700;
+        color: #333;
+        background: #f7f9fb;
+      }
+
+      .posture-tag {
+        display: inline-block;
+        padding: 0.1rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: lowercase;
+      }
+
+      .posture-tag--ok {
+        background: #e8f4ea;
+        color: #1a5c2e;
+      }
+
+      .posture-muted {
+        font-size: 0.8rem;
+        color: #666;
+      }
+
+      .posture-cols {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+        gap: 1rem;
       }
 
       .letter-sheet {
@@ -614,6 +774,13 @@
         margin: 1.25em 0;
         border: 0;
         border-top: 1px solid #e0e4e7;
+      }
+
+      .resume-why__principles {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.5rem;
+        margin-bottom: 0.65em;
       }
 
       .skill-grid {
@@ -828,7 +995,9 @@
         .resume-sheet,
         .resume-sheet *,
         .resume-motivation,
-        .resume-motivation * {
+        .resume-motivation *,
+        .resume-posture,
+        .resume-posture * {
           box-shadow: none !important;
         }
 
@@ -839,17 +1008,31 @@
         }
 
         body[data-print-mode="full"] .resume-sheet--one-page,
-        body[data-print-mode="full"] .resume-motivation {
+        body[data-print-mode="full"] .resume-motivation,
+        body[data-print-mode="full"] .resume-posture {
           display: none !important;
         }
 
         body[data-print-mode="one-page"] .resume-sheet--full,
-        body[data-print-mode="one-page"] .resume-motivation {
+        body[data-print-mode="one-page"] .resume-motivation,
+        body[data-print-mode="one-page"] .resume-posture {
           display: none !important;
         }
 
         body[data-print-mode="letter"] .resume-sheet--full,
-        body[data-print-mode="letter"] .resume-sheet--one-page {
+        body[data-print-mode="letter"] .resume-sheet--one-page,
+        body[data-print-mode="letter"] .resume-posture {
+          display: none !important;
+        }
+
+        body[data-print-mode="posture"] .resume-sheet--full,
+        body[data-print-mode="posture"] .resume-sheet--one-page,
+        body[data-print-mode="posture"] .resume-motivation {
+          display: none !important;
+        }
+
+        /* Dossier candidature « tout en un » : pas d’annexe posture par défaut */
+        body[data-print-mode="all"] .resume-posture {
           display: none !important;
         }
 
@@ -1388,12 +1571,66 @@
       }
 
       @media screen and (max-width: 50rem) {
+        body {
+          font-size: 10.5pt;
+          margin-block-end: 0;
+        }
+
+        body .resume-print-hint {
+          margin-inline: 1rem;
+        }
+
+        body .resume-sheet > .header {
+          grid-template-columns: 80px minmax(0, 1fr);
+        }
+
+        body .resume-sheet > .header .header-main {
+          padding: 1rem;
+        }
+
+        body .resume-sheet > .header h1 {
+          font-size: clamp(1.45rem, 7vw, 2rem);
+          line-height: 0.95;
+          overflow-wrap: anywhere;
+        }
+
+        body .resume-sheet > .header .subtitle {
+          font-size: 1.1em;
+          letter-spacing: 0.35em;
+        }
+
+        body .resume-sheet > main {
+          display: block;
+          padding: 0 1rem;
+        }
+
+        body .resume-sheet main > .section {
+          padding-inline: 0;
+          margin-inline: 0;
+        }
+
         body .resume-sheet main > .section > h2 {
-          grid-column-end: span 2;
+          grid-column-end: auto;
         }
 
         body .resume-sheet main > .section > .subsection {
-          grid-column-start: 1;
+          grid-column-start: auto;
+        }
+
+        body .resume-sheet > main > .section .focus,
+        body .resume-sheet > main > .section .skill-grid,
+        body .resume-sheet > main > .section .resume-why__principles {
+          grid-template-columns: 1fr;
+        }
+
+        body .resume-sheet main .text,
+        body .resume-sheet main .text * {
+          min-width: 0;
+          max-width: 100%;
+        }
+
+        body .resume-sheet table {
+          font-size: 0.76em;
         }
       }
     </style>

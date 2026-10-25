@@ -1,3 +1,4 @@
+{{/* Galerie CV : liste autonome, sans dépendance à la coque Minigo. */}}
 <div class="container--sm">
   <section class="page-header">
     <h1 class="page-header-title">{{ .Title }}</h1>
@@ -20,8 +21,8 @@
   {{- $cv = $cv.ByTitle -}}
   {{- if $cv -}}
   <section class="resume-gallery" aria-labelledby="resume-gallery-heading">
-    <h2 id="resume-gallery-heading" class="visually-hidden">{{ i18n "resume-gallery-heading" | default "Curricula" }}</h2>
-    <div class="catalog-grid">
+    <h2 id="resume-gallery-heading" class="visually-hidden">{{ i18n "resume-gallery-heading" }}</h2>
+    <div class="resume-gallery-grid">
       {{- range $i, $p := $cv -}}
         {{ partial "resume/gallery-card.html" (dict "page" $p "index" $i) }}
       {{- end -}}
@@ -29,4 +30,4 @@
   </section>
   {{- end -}}
 </div>
-{{ partial "catalog/styles.html" . }}
+{{ partial "resume/gallery-styles.html" . }}

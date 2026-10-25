@@ -1,30 +1,28 @@
-{{/* Dict: page (Page), index (optional int) — requiert module minigo (partials catalog/*) */}}
+{{/* Dict: page (Page), index (optional int) — carte de galerie CV autonome (aucune dépendance à Minigo). */}}
 {{- $p := .page -}}
 {{- $idx := int (default 0 .index) -}}
 {{- $r := $p.Params.resume | default dict -}}
 {{- $job := $r.job | default $p.Description -}}
 {{- $name := $r.name | default $p.LinkTitle -}}
 {{- $key := printf "%s|%s" $p.RelPermalink (default $r.job "") -}}
-{{- $art := partial "catalog/visual-art.html" (dict "key" $key "index" $idx "accent" ($r.accent | default "")) -}}
-{{- $motif := upper ($p.File.ContentBaseName | default "CV") -}}
-{{- with $r.job -}}
-  {{- $words := split . " " -}}
-  {{- if gt (len $words) 0 -}}{{- $motif = upper (index $words 0) -}}{{- end -}}
+{{- $art := partial "resume/gallery-art.html" (dict "key" $key "index" $idx "accent" ($r.accent | default "")) -}}
+{{- $label := "" -}}
+{{- range $i, $w := split ($name | default "CV") " " -}}
+  {{- if lt (int $i) 2 -}}{{- $label = printf "%s%s" $label (substr $w 0 1) -}}{{- end -}}
 {{- end -}}
-{{- $label := "CV" -}}
-{{- with $r.name -}}
-  {{- $label = "" -}}
-  {{- range $i, $w := split . " " -}}
-    {{- if lt (int $i) 2 -}}{{- $label = printf "%s%s" $label (substr $w 0 1) -}}{{- end -}}
-  {{- end -}}
-{{- end -}}
-<article class="catalog-card">
-  <a class="catalog-card__link" href="{{ $p.RelPermalink }}">
-    {{ partial "catalog/card-visual.html" (dict "art" $art "motif" $motif "label" $label "thumbnail" $p.Params.thumbnail) }}
-    <div class="catalog-card__body">
-      <h2 class="catalog-card__title">{{ $p.LinkTitle }}</h2>
-      {{- with $job -}}<p class="catalog-card__meta">{{ . }}</p>{{- end -}}
-      {{- with $name -}}<p class="catalog-card__sub">{{ . }}</p>{{- end -}}
+<article class="resume-gallery-card" style="--resume-gallery-accent: {{ $art.accent }};">
+  <a class="resume-gallery-card__link" href="{{ $p.RelPermalink }}">
+    <div class="resume-gallery-card__visual" data-visual="{{ $art.variant }}" data-overlay="{{ $art.overlay }}" style="--resume-gallery-angle: {{ $art.angle }}deg;">
+      {{- with $p.Params.thumbnail -}}
+        <img class="resume-gallery-card__img" src="{{ . | relURL }}" alt="" loading="lazy" decoding="async">
+      {{- else -}}
+        <span class="resume-gallery-card__label" aria-hidden="true">{{ $label }}</span>
+      {{- end -}}
+    </div>
+    <div class="resume-gallery-card__body">
+      <h2 class="resume-gallery-card__title">{{ $p.LinkTitle }}</h2>
+      {{- with $job -}}<p class="resume-gallery-card__meta">{{ . }}</p>{{- end -}}
+      {{- with $name -}}<p class="resume-gallery-card__sub">{{ . }}</p>{{- end -}}
     </div>
   </a>
 </article>

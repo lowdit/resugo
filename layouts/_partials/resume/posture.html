@@ -1,0 +1,116 @@
+{{- /* Annexe reporting « posture » — spec resugo/docs/IDEES-EVOLUTION.md */ -}}
+{{- $page := .Page | default . -}}
+{{- $p := $page.Params.posture -}}
+{{- if not $p -}}
+  {{- with $page.Resources.GetMatch "posture.yaml" -}}
+    {{- $raw := .Content | transform.Unmarshal -}}
+    {{- $p = index $raw "posture" -}}
+  {{- end -}}
+{{- end -}}
+{{- if and $p (ne ($p.enabled | default true) false) -}}
+<div class="resume-posture page-break{{ if not ($p.include_in_application | default false) }} resume-posture--annexe{{ end }}">
+  <article class="posture-sheet" aria-label="{{ i18n "title-posture" }}">
+    <p class="posture-sheet__badge no-print">{{ i18n "posture-annexe-hint" }}</p>
+    <header class="posture-masthead">
+      <p class="posture-masthead__eyebrow">{{ i18n "title-posture" }}</p>
+      {{- with $page.Params.resume.name -}}
+      <h2 class="posture-masthead__title">{{ . }}</h2>
+      {{- end -}}
+      {{- with $p.offre_ref -}}<p class="posture-masthead__ref">{{ . }}</p>{{- end -}}
+      {{- with $p.updated -}}<p class="posture-masthead__date">{{ i18n "posture-updated" }} {{ . }}</p>{{- end -}}
+    </header>
+
+    {{- with $p.report_lead -}}
+    <div class="posture-lead">{{ . | markdownify }}</div>
+    {{- end -}}
+
+    {{- with $p.fit.headline -}}
+    <section class="posture-block">
+      <h3>{{ i18n "posture-exec-summary" }}</h3>
+      <p>{{ . }}</p>
+    </section>
+    {{- end -}}
+
+    {{- with $p.fit.forces -}}
+    <section class="posture-block">
+      <h3>{{ i18n "posture-forces" }}</h3>
+      <table class="posture-table">
+        <thead>
+          <tr><th scope="col">{{ i18n "posture-col-theme" }}</th><th scope="col">{{ i18n "posture-col-level" }}</th><th scope="col">{{ i18n "posture-col-proof" }}</th></tr>
+        </thead>
+        <tbody>
+          {{- range . -}}
+          <tr>
+            <td>{{ .libelle }}</td>
+            <td><span class="posture-tag posture-tag--ok">{{ .niveau }}</span></td>
+            <td>{{ .preuve }}</td>
+          </tr>
+          {{- end -}}
+        </tbody>
+      </table>
+    </section>
+    {{- end -}}
+
+    {{- with $p.fit.ecarts -}}
+    <section class="posture-block">
+      <h3>{{ i18n "posture-gaps" }}</h3>
+      <table class="posture-table">
+        <thead>
+          <tr>
+            <th scope="col">{{ i18n "posture-col-theme" }}</th>
+            <th scope="col">{{ i18n "posture-col-now" }}</th>
+            <th scope="col">{{ i18n "posture-col-target" }}</th>
+            <th scope="col">{{ i18n "posture-col-horizon" }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{- range . -}}
+          <tr>
+            <td>{{ .libelle }}{{- with .commentaire }}<br /><span class="posture-muted">{{ . }}</span>{{- end -}}</td>
+            <td>{{ .niveau_actuel }}</td>
+            <td>{{ .niveau_croisiere }}</td>
+            <td>{{ .delai }}</td>
+          </tr>
+          {{- end -}}
+        </tbody>
+      </table>
+    </section>
+    {{- end -}}
+
+    {{- with $p.plan_si_poste -}}
+    <section class="posture-block">
+      <h3>{{ i18n "posture-plan" }}</h3>
+      {{- with .hypothese -}}<p class="posture-muted"><em>{{ . }}</em></p>{{- end -}}
+      {{- with .j30 -}}
+      <h4>{{ i18n "posture-j30" }}</h4>
+      <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+      {{- end -}}
+      {{- with .j60 -}}
+      <h4>{{ i18n "posture-j60" }}</h4>
+      <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+      {{- end -}}
+      {{- with .j90 -}}
+      <h4>{{ i18n "posture-j90" }}</h4>
+      <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+      {{- end -}}
+    </section>
+    {{- end -}}
+
+    {{- with $p.entretien_prochain.cabinet_30min -}}
+    <section class="posture-block posture-block--compact">
+      <h3>{{ i18n "posture-interview-notes" }}</h3>
+      <div class="posture-cols">
+        <div>
+          <h4>{{ i18n "posture-say" }}</h4>
+          <ul>{{ range .dire }}<li>{{ . }}</li>{{ end }}</ul>
+        </div>
+        <div>
+          <h4>{{ i18n "posture-avoid" }}</h4>
+          <ul>{{ range .eviter }}<li>{{ . }}</li>{{ end }}</ul>
+        </div>
+      </div>
+    </section>
+    {{- end -}}
+  </article>
+</div>
+{{- end -}}
