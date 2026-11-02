@@ -77,21 +77,15 @@
     </section>
     {{- end -}}
 
-    {{- with $p.plan_si_poste -}}
+    {{- with $p.plan_si_poste.periodes -}}
     <section class="posture-block">
       <h3>{{ i18n "posture-plan" }}</h3>
-      {{- with .hypothese -}}<p class="posture-muted"><em>{{ . }}</em></p>{{- end -}}
-      {{- with .j30 -}}
-      <h4>{{ i18n "posture-j30" }}</h4>
-      <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+      {{- with $p.plan_si_poste.certitude -}}
+      <p class="posture-muted"><em>{{ . | markdownify | plainify }}</em></p>
       {{- end -}}
-      {{- with .j60 -}}
-      <h4>{{ i18n "posture-j60" }}</h4>
-      <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
-      {{- end -}}
-      {{- with .j90 -}}
-      <h4>{{ i18n "posture-j90" }}</h4>
-      <ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>
+      {{- range . -}}
+      <h4>{{ .titre }}{{- with .sous }} <span class="posture-muted">— {{ . }}</span>{{ end }}</h4>
+      <ul>{{ range .suivre }}<li>{{ . }}</li>{{ end }}</ul>
       {{- end -}}
     </section>
     {{- end -}}

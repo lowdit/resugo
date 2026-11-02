@@ -1,0 +1,40 @@
+{
+  "titre": "Carte de continuité — Bertrand Keller",
+  "role": "Trait d'union : je relie la vision produit à l'exécution",
+  "sous-role": "L'IA exécute et propose. Je cadre, je contrôle et je décide, avec l'équipe.",
+  "description": "Carte de continuité du travail produit. Je relie la vision à l'exécution sur six domaines : Produit (prouvé) : vision, roadmap, arbitrages tracés. Design (pratique) : parcours, critères d'acceptation. Technique (pratique) : architecture web, modules Hugo. Delivery (prouvé) : incréments cadrés, validation humaine. Qualité et conformité (prouvé) : recette, Definition of Done, RGAA. IA (pratique) : délégation cadrée, contrôle, veille. Niveaux : prouvé, pratique, transférable, à acquérir ; chaque niveau renvoie à une preuve détaillée dans le CV.",
+  "legende": "Niveaux : prouvé · pratique · transférable · à acquérir — la preuve de chaque niveau est dans le CV.",
+  "blocs": [
+    {
+      "nom": "Produit",
+      "niveau": "prouvé",
+      "lignes": ["vision · roadmap", "arbitrages tracés"]
+    },
+    {
+      "nom": "Design",
+      "niveau": "pratique",
+      "lignes": ["parcours", "critères d'acceptation"]
+    },
+    {
+      "nom": "Technique",
+      "niveau": "pratique",
+      "lignes": ["architecture web", "modules Hugo"]
+    },
+    {
+      "nom": "Delivery",
+      "niveau": "prouvé",
+      "lignes": ["incréments cadrés", "validation humaine"]
+    },
+    {
+      "nom": "Qualité / conformité",
+      "niveau": "prouvé",
+      "lignes": ["recette · DoD", "RGAA"]
+    },
+    {
+      "nom": "IA",
+      "niveau": "pratique",
+      "lignes": ["délégation cadrée", "contrôle · veille"],
+      "traversant": true
+    }
+  ]
+}

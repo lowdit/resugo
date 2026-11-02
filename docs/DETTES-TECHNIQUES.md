@@ -1,6 +1,6 @@
 # Dettes techniques — Resugo
 
-État constaté le 2026-10-21, complété le 2026-10-23. Ces points sont des
+État constaté le 2026-10-21, complété le 2026-10-26. Ces points sont des
 **suspects à corriger**, pas des fonctionnalités validées.
 
 ## Corrigés dans cet incrément
@@ -43,6 +43,25 @@
 - [x] **Higo 0.9.1.** Le blog passe de `v0.8.6` à `v0.9.1` : `render-image.html`
   ne casse plus sur un SVG (`.Height`). `go.mod` et `_vendor/` alignés ; penser à
   `hugo mod vendor` après chaque modification de thème local.
+- [x] **Accueil Resugo sans styles de galerie.** `home/cv.html` vivait dans
+  Minigo et rendait les cartes `resume-gallery-card` dans un `catalog-grid` avec
+  la CSS `catalog`. Le partial est déplacé dans
+  `resugo/layouts/_partials/home/cv.html` ; Minigo ne garde que
+  `home/catalog-grid.html`, générique, avec un paramètre `gridClass`. Le profil
+  CV passe `resume-gallery-grid` et inline `resume/gallery-styles.html`. Vérifié
+  en build `-e development` : 6 cartes, grille 4 colonnes desktop, 1 colonne à
+  320 px, bordures et visuels présents.
+- [x] **Sligo — lecteur mobile.** Sous 900 px, `sligo.js` n'initialise plus la
+  scène Reveal : les slides passent dans le flux (`body.sligo-reader`), une par
+  section, en hauteur naturelle. Le défilement vertical est natif, les fragments
+  restent lisibles sans clic, les fonds `data-background-color` sont réappliqués
+  et le radial devient une pile. Desktop Reveal est inchangé. Cible ajoutée à
+  `bin/serve-hugo.responsive`.
+- [x] **`hs group` confondait un ancien serveur avec le site attendu.** Le groupe
+  ne testait que l'écoute du port. Après renumérotation, un ancien Sligo restait
+  sur le port de Repogo et `modules` ouvrait deux Sligo. `group_process_source`
+  compare désormais le `-s` du processus Hugo au dossier cible ; en cas de
+  conflit, le site est lancé sur le prochain port libre avec un avertissement.
 
 ## Dettes restantes à arbitrer
 
@@ -52,11 +71,10 @@
   le `baseof` de Higo), mais Resugo seul ne peut pas rendre une page de thème.
   `social-meta` a été rapatrié ; décider pour le reste : documenter Minigo comme
   coque officielle, soit rapatrier ces partials.
-- [ ] **Decks Sligo sur écran étroit.** Le canvas Reveal 16:9 n'est pas reflowé :
-  le document ne déborde pas, mais du contenu peut être coupé en bas de slide.
-  Arbitrage à rendre : canvas 16:9 avec zoom/scroll, ou reflow mobile avec
-  défilement vertical interne. Ne pas ajouter de test de découpe avant cet
-  arbitrage.
+- [ ] **Sligo desktop — une slide déborde de 17 px.** À 1280 px, la slide
+  « Le bloc image » a un `scrollHeight` de 817 px pour 800 px visibles, avec
+  `overflow: hidden`. Le lecteur mobile n'est pas concerné. À corriger dans la
+  composition image ou à couvrir par un contrôle de découpe dédié.
 - [ ] **Doublon `assets/` / `static/assets/`.** La même CSS existe dans les deux
   arbres (dont `resume-gallery.css`). Vérifier si le doublon `static/` est encore
   nécessaire ou s'il est un vestige de `sync-brand.sh`.
@@ -76,7 +94,26 @@
 - [ ] **`layouts/gallery/` est vide** : vestige à supprimer ou à documenter.
 - [ ] **`/favicon.ico` renvoie 404** sur les deux sites (le navigateur le demande
   même quand des `<link rel=icon>` existent). Ajouter un `favicon.ico` racine.
+## Tests du 2026-10-26
+
+- `bin/serve-hugo test dev resugo repogo sligo` : 3/3 OK.
+- `bin/serve-hugo test build bertrandkeller` : OK (1 avertissement existant
+  `.Site.Data` déprécié).
+- `bin/serve-hugo test responsive` : 5 URLs sur 4 sites (accueil et CV Resugo,
+  aperçu Repogo, CV blog, deck Sligo), 320 et 390 px, **0 débordement de
+  document**.
+- Sligo lecteur : 23 sections visibles à 320/390 px, `scrollHeight` par section
+  inférieur ou égal à la hauteur rendue (0 découpe interne), défilement
+  documentaire effectif ; desktop 1280 px conserve Reveal.
+- Accueil Resugo dev : 6 cartes, `resume-gallery-grid`, aucun `catalog-grid`.
+- `hs group modules --no-open` : 4 sites, Repogo sur `:1328`, un seul Sligo.
+  Le garde-fou a aussi été vérifié avec un ancien Sligo sur `:1328` : Repogo
+  bascule sur `:1331` avec un message explicite.
+
 ## Tests du 2026-10-23
+
+> État historique : le comportement Sligo décrit ci-dessous est remplacé par le
+> lecteur mobile du 2026-10-26.
 
 - `bin/serve-hugo test dev resugo repogo sligo` : 3/3 OK.
 - `bin/serve-hugo test build bertrandkeller` : OK (1 avertissement existant

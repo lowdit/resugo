@@ -14,6 +14,7 @@
     <meta name="description" content="{{ . | plainify }}">
     {{- end -}}
     {{ partial "lowdit/social-meta.html" $page }}
+    {{ partial "lowdit/favicon.html" $page }}
   </head>
   <body style="--resume-accent: {{ $accent }};">
     {{ if $page.Params.resume }}
@@ -98,6 +99,27 @@
         var PRINT_TITLE_DELAY_MS = 150;
         var PRINT_QUEUE_GAP_MS = 650;
         var TITLE_SEP = " — ";
+
+        /* Annexe posture : hors dossier imprimé. Blink fabrique une page blanche
+           avec display:none + saut forcé : retirer le nœud du DOM est la seule
+           voie fiable. Remis après impression (afterprint). */
+        var postureNode = document.querySelector(".resume-posture");
+        var postureSlot = null;
+        var postureExcludedModes = { "full": 1, "one-page": 1, "letter": 1, "all": 1 };
+
+        window.addEventListener("beforeprint", function () {
+          if (!postureNode || postureSlot) return;
+          var mode = document.body.dataset.printMode || "all";
+          if (!postureExcludedModes[mode]) return;
+          postureSlot = { parent: postureNode.parentNode, next: postureNode.nextSibling };
+          postureNode.remove();
+        });
+
+        window.addEventListener("afterprint", function () {
+          if (!postureNode || !postureSlot) return;
+          postureSlot.parent.insertBefore(postureNode, postureSlot.next);
+          postureSlot = null;
+        });
 
         function sheetNode(mode) {
           if (mode === "full") return document.querySelector(".resume-sheet--full");
@@ -1031,9 +1053,76 @@
           display: none !important;
         }
 
-        /* Dossier candidature « tout en un » : pas d’annexe posture par défaut */
-        body[data-print-mode="all"] .resume-posture {
+        /* Dossier candidature « tout en un » : pas d’annexe posture par défaut.
+           Le panneau, en mode groupé, supprime data-print-mode : viser son absence. */
+        body:not([data-print-mode]) .resume-posture {
           display: none !important;
+        }
+
+        /* Annexe posture : une note claire, une page. */
+        body[data-print-mode="posture"] .resume-posture {
+          break-before: auto;
+          page-break-before: auto;
+        }
+
+        .resume-posture {
+          max-width: none;
+          margin: 0;
+          padding: 6mm 8mm;
+        }
+
+        .posture-sheet {
+          padding: 7mm 9mm 8mm 10mm;
+          border: none;
+          border-radius: 0;
+          font-size: 10.5pt;
+        }
+
+        .posture-masthead__title {
+          font-size: 1.25rem;
+        }
+
+        .posture-lead {
+          margin: 4mm 0 3mm;
+          padding: 2.5mm 3.5mm;
+          line-height: 1.35;
+        }
+
+        .posture-block {
+          margin-top: 3.5mm;
+        }
+
+        .posture-block h3 {
+          margin-bottom: 1.5mm;
+          font-size: 0.92rem;
+        }
+
+        .posture-block h4 {
+          margin: 2.5mm 0 1mm;
+          font-size: 0.84rem;
+        }
+
+        .posture-block ul {
+          margin-bottom: 1mm;
+          line-height: 1.32;
+        }
+
+        .posture-table {
+          line-height: 1.3;
+        }
+
+        .posture-table th,
+        .posture-table td {
+          padding: 1.2mm 1.8mm;
+        }
+
+        .posture-cols {
+          grid-template-columns: 1fr 1fr;
+          gap: 4mm;
+        }
+
+        .posture-cols h4 {
+          margin-top: 0;
         }
 
         .resume-sheet--one-page {
@@ -1115,8 +1204,8 @@
         .resume-motivation--centered .letter-sheet {
           display: flex;
           flex-direction: column;
-          min-height: calc(100vh - 24mm);
-          min-height: calc(100dvh - 24mm);
+          min-height: calc(100vh - 38mm);
+          min-height: calc(100dvh - 38mm);
         }
 
         .resume-motivation--centered .letter-masthead {
@@ -1440,6 +1529,7 @@
               }
               & > h2 {
                 margin-top: 1rem;
+                page-break-before: always;
               }
             }
 

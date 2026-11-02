@@ -36,18 +36,15 @@ print-one-document: Un seul document
 print-sheet-full: Parcours détaillé
 print-sheet-one-page: Synthèse
 print-sheet-letter: Lettre de motivation
-print-sheet-posture: Reporting posture (annexe)
-title-posture: Auto-reporting — profil et offre
-posture-annexe-hint: Annexe personnelle — non incluse dans le dossier candidature par défaut (imprimer via « Reporting posture »).
+print-sheet-posture: Note de posture (annexe)
+title-posture: Note de posture — face à l’offre
+posture-annexe-hint: Annexe personnelle — non incluse dans le dossier candidature par défaut (imprimer via « Note de posture »).
 posture-updated: "Mise à jour :"
-posture-exec-summary: Synthèse exécutive
-posture-forces: Atouts vérifiables
+posture-exec-summary: En une phrase
+posture-forces: Là où c’est déjà fait
 posture-gaps: Écarts assumés et cible de croisière
-posture-plan: Plan d’action si embauche (hypothèse)
-posture-j30: 30 jours
-posture-j60: 60 jours
-posture-j90: 90 jours
-posture-interview-notes: Notes entretien (interne)
+posture-plan: À quoi me prendre au mot
+posture-interview-notes: Pour l’entretien
 posture-say: À dire
 posture-avoid: À éviter
 posture-col-theme: Thème

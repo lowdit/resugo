@@ -87,7 +87,7 @@
         <strong>Formation :</strong>
         {{ .title }}, {{ .company }}{{ with .date }} ({{ . }}){{ end }}
         {{- with .text }} — {{ . | markdownify | plainify }}{{ end }}
-        {{ with .img }}<div class="img"><img src="{{ delimit (first 1 (split . " | ")) "" }}" alt="{{ delimit (first 2 (split . " | ")) "" }}"></a></div>{{ end }}
+        {{ with .img }}{{ $imgParts := split . " | " }}<div class="img"><img src="{{ index $imgParts 0 }}" alt="{{ index $imgParts 1 | default (index $imgParts 0) }}"></div>{{ end }}
       </p>
       {{- end }}
     </article>
@@ -167,7 +167,7 @@
             {{- with .company }}<span class="experience-company"><em>{{ . }}</em></span>{{ end }}
           </header>
           <div class="text">{{ $body | markdownify }}</div>
-          {{ with .img }}<div class="img"><img src="{{ delimit (first 1 (split . " | ")) "" }}" alt="{{ delimit (first 2 (split . " | ")) "" }}"></a></div>{{ end }}
+          {{ with .img }}{{ $imgParts := split . " | " }}<div class="img"><img src="{{ index $imgParts 0 }}" alt="{{ index $imgParts 1 | default (index $imgParts 0) }}"></div>{{ end }}
           {{ end }}
         </section>
         {{- end }}
