@@ -32,7 +32,7 @@
     {{- $postureData := $page.Params.posture -}}
     {{- if not $postureData -}}
       {{- with $page.Resources.GetMatch "posture.yaml" -}}
-        {{- $raw := .Content | transform.Unmarshal -}}
+        {{- $raw := . | transform.Unmarshal -}}
         {{- $postureData = index $raw "posture" -}}
       {{- end -}}
     {{- end -}}
@@ -533,6 +533,53 @@
         margin-top: 0.35rem;
         padding-top: 0.45rem;
         border-top: 1px solid #e8e8e8;
+      }
+
+      .resume-encart {
+        margin: 0.5rem 0 0.75rem;
+        padding: 0.55rem 0.75rem;
+        border-left: 4px solid var(--resume-accent, #0e7ab8);
+        background: color-mix(in srgb, var(--resume-accent, #0e7ab8) 7%, #fff);
+        font-size: 0.9em;
+        line-height: 1.38;
+      }
+
+      .resume-encart__title {
+        margin: 0 0 0.35rem;
+        font-size: 0.95em;
+        font-weight: 800;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: color-mix(in srgb, var(--resume-accent, #0e7ab8) 80%, #111);
+      }
+
+      .resume-encart__lead,
+      .resume-encart__foot {
+        margin: 0 0 0.35rem;
+      }
+
+      .resume-encart__list {
+        margin: 0 0 0.35rem;
+        padding-left: 1.1rem;
+      }
+
+      .resume-encart__list li {
+        margin-bottom: 0.15rem;
+      }
+
+      .resume-encart__tools {
+        margin: 0;
+        font-size: 0.92em;
+      }
+
+      .resume-encart__chip {
+        display: inline-block;
+        margin: 0.1rem 0.15rem 0 0;
+        padding: 0.05rem 0.45rem;
+        border: 1px solid color-mix(in srgb, var(--resume-accent, #0e7ab8) 30%, #ccc);
+        border-radius: 999px;
+        background: #fff;
+        font-size: 0.88em;
       }
 
       .section--skills-compact,
@@ -1464,6 +1511,7 @@
               border-top: 1px solid #e5e5e5;
               padding-top: 0.45rem;
               padding-bottom: 0.85rem;
+              font-size: 0.9em;
             }
 
             .resume-sheet--full:not(.resume-sheet--classic) &.section--experience > .subsection--experience:nth-child(5) {
@@ -1529,7 +1577,7 @@
               }
               & > h2 {
                 margin-top: 1rem;
-                page-break-before: always;
+                /*page-break-before: always;*/
               }
             }
 
@@ -1556,6 +1604,7 @@
 
                 & > h3.experience-title {
                   flex: 1 1 12rem;
+                  margin-block: 0.5em;
                   font-size: 1.1rem;
                   font-weight: bolder;
                   line-height: 1.25;
@@ -1607,11 +1656,37 @@
         }
 
         .resume-sheet--one-page .subsection--experience {
-          padding-bottom: 0.35rem;
+          padding-bottom: 0.25rem;
         }
 
         .resume-sheet--one-page .experience-body--summary p {
-          margin-bottom: 0.2em;
+          margin-bottom: 0.15em;
+        }
+
+        .resume-sheet--one-page .section--encart-one-page {
+          break-inside: avoid;
+          page-break-inside: avoid;
+          margin-bottom: 0.25rem;
+        }
+
+        .resume-sheet--one-page .resume-encart {
+          margin: 0.15rem 0 0.35rem;
+          padding: 0.4rem 0.55rem;
+          font-size: 0.82em;
+          line-height: 1.32;
+        }
+
+        .resume-sheet--one-page .section--experience {
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+
+        .resume-sheet--one-page .section--skills-one-page {
+          margin-bottom: 0.15rem;
+        }
+
+        .resume-sheet--one-page .section--education-compact {
+          margin-top: 0.15rem;
         }
 
         .resume-sheet--classic,

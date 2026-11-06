@@ -75,7 +75,12 @@
     {{ $isExperience := or (in $sectionName "experience") (in $sectionName "expérience") }}
     {{ $isFocus := or (in $sectionName "focus") (in $sectionName "preuve") }}
     {{ $isEducation := or (eq $sectionName "education") (eq $sectionName "formation") }}
-    {{ if and $onePage $isFocus }}{{ else }}
+    {{ $secOnePageOnly := .onePageOnly | default false }}
+    {{ $secFullOnly := .fullPageOnly | default false }}
+    {{ if and $secOnePageOnly (not $onePage) }}
+    {{ else if and $secFullOnly $onePage }}
+    {{ else if and $onePage $isFocus }}
+    {{ else }}
     {{ $elements := .element }}
     {{ $hasSkills := false }}
     {{ with index $elements 0 }}{{ if .skills }}{{ $hasSkills = true }}{{ end }}{{ end }}
@@ -104,6 +109,11 @@
       {{ partial "resume/skill-grid.html" (dict "groups" $skillBlocks "onePage" true) }}
     </article>
 
+    {{- else if and $onePage (eq (len $elements) 1) (index $elements 0).encart }}
+    <article class="section section--encart-one-page">
+      {{ partial "resume/encart.html" (index $elements 0).encart }}
+    </article>
+
     {{- else }}
     <article class="section {{ .name | anchorize }}{{ if $hasSkills }} section--skills{{ end }}{{ if $isExperience }} section--experience{{ end }}{{ if $isEducation }} section--education{{ end }}{{ if $isFocus }} section--focus{{ end }}">
       <h2>{{ .name }}</h2>
@@ -117,6 +127,11 @@
           {{- else }}
             {{ $expMain = $expMain | append . }}
           {{- end }}
+        {{- end }}
+        {{- $expLimit := int ($resume.onePageExperienceLimit | default 0) }}
+        {{- if and $onePage (gt $expLimit 0) (gt (len $expMain) $expLimit) }}
+          {{- $expListed = $expListed | append (after $expLimit $expMain) }}
+          {{- $expMain = first $expLimit $expMain }}
         {{- end }}
         {{- range $expMain }}
           {{ partial "resume/experience-entry.html" (dict "exp" . "onePage" $onePage "classic" $classic) }}
@@ -150,6 +165,8 @@
           </div>
           {{ else if .why }}
           {{ partial "resume/why.html" .why }}
+          {{ else if .encart }}
+          {{ partial "resume/encart.html" .encart }}
           {{ else if .diagram }}
           <div class="text">{{ partial "resume/diagram.html" .diagram }}</div>
           {{ else if .positions }}

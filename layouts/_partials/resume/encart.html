@@ -1,0 +1,18 @@
+{{- /* Encart compact (synthèse ou CV long) — titre, accroche, puces courtes, note de bas. */ -}}
+{{- $d := . -}}
+<aside class="resume-encart" aria-label="{{ $d.title | default "Encart" }}">
+  {{- with $d.title }}<h3 class="resume-encart__title">{{ . }}</h3>{{ end }}
+  {{- with $d.lead }}<p class="resume-encart__lead">{{ . }}</p>{{ end }}
+  {{- with $d.items }}
+  <ul class="resume-encart__list">
+    {{- range . }}<li>{{ . }}</li>{{ end }}
+  </ul>
+  {{- end }}
+  {{- with $d.tools }}
+  <p class="resume-encart__tools">
+    <strong>{{ .label }}</strong>
+    {{- range .items }} <span class="resume-encart__chip">{{ . }}</span>{{ end }}
+  </p>
+  {{- end }}
+  {{- with $d.foot }}<p class="resume-encart__foot">{{ . }}</p>{{ end }}
+</aside>

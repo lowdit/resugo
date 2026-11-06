@@ -1,0 +1,155 @@
+{{ define "main" }}
+{{- partial "utils/nav-depth" . -}}
+<style>
+  .interview-prep-wrap {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: var(--baseline, 1rem) var(--baseline, 1rem) 3rem;
+  }
+  .interview-prep-header {
+    border: 2px solid var(--prep-accent, #1a6b4a);
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+    background: linear-gradient(135deg, rgba(26, 107, 74, 0.06) 0%, transparent 55%);
+  }
+  .interview-prep-kicker {
+    margin: 0 0 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--prep-accent, #1a6b4a);
+  }
+  .interview-prep-title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.35rem, 3vw, 1.75rem);
+    line-height: 1.2;
+  }
+  .interview-prep-meta {
+    display: grid;
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+    font-size: 0.95rem;
+  }
+  @media (min-width: 32rem) {
+    .interview-prep-meta {
+      grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    }
+  }
+  .interview-prep-meta div {
+    margin: 0;
+  }
+  .interview-prep-meta dt {
+    margin: 0;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #444;
+  }
+  .interview-prep-meta dd {
+    margin: 0.15rem 0 0;
+  }
+  .interview-prep-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    align-items: center;
+    margin: 1.25rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  .interview-prep-actions button {
+    cursor: pointer;
+    padding: 0.45rem 1rem;
+    font: inherit;
+    font-weight: 600;
+    color: #fff;
+    background: var(--prep-accent, #1a6b4a);
+    border: none;
+    border-radius: 4px;
+  }
+  .interview-prep-actions button:focus {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+  .interview-prep-article {
+    /* .markdown expected from theme for tables, headings */
+  }
+  .interview-prep-footer {
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    font-size: 0.85rem;
+    color: #555;
+    border-top: 1px solid #ddd;
+  }
+  @media print {
+    .interview-prep-actions,
+    .no-print {
+      display: none !important;
+    }
+    .interview-prep-wrap {
+      max-width: none;
+      padding: 0;
+    }
+    .interview-prep-header {
+      break-inside: avoid;
+      border-width: 1pt;
+    }
+    .interview-prep-article {
+      font-size: 10pt;
+    }
+    .interview-prep-article h2,
+    .interview-prep-article h3 {
+      break-after: avoid;
+    }
+    .interview-prep-article table {
+      break-inside: avoid;
+    }
+  }
+</style>
+<div
+  class="interview-prep-wrap"
+  style="--prep-accent: {{ .Params.prep_accent | default "#1a6b4a" }};"
+>
+  <article class="interview-prep-article markdown">
+    <header class="interview-prep-header">
+      <p class="interview-prep-kicker">Fiche de préparation — entretien</p>
+      <h1 class="interview-prep-title">{{ .Title }}</h1>
+      <dl class="interview-prep-meta">
+        {{- with .Params.prep_company -}}
+        <div>
+          <dt>Organisation</dt>
+          <dd>{{ . }}</dd>
+        </div>
+        {{- end -}}
+        {{- with .Params.prep_role -}}
+        <div>
+          <dt>Poste visé</dt>
+          <dd>{{ . }}</dd>
+        </div>
+        {{- end -}}
+        {{- with .Date -}}
+        <div>
+          <dt>Préparé le</dt>
+          <dd>{{ .Format "2 January 2006" }}</dd>
+        </div>
+        {{- end -}}
+      </dl>
+      <div class="interview-prep-actions no-print">
+        <button type="button" onclick="window.print()">Imprimer ou enregistrer en PDF</button>
+        {{- with .Params.prep_cv_url -}}
+        <a href="{{ . | relURL }}">CV associé</a>
+        {{- end -}}
+      </div>
+    </header>
+    {{ partialCached "content.html" .Content .Content }}
+    {{- if .Params.prep_print_footer -}}
+    <footer class="interview-prep-footer">{{ .Params.prep_print_footer }}</footer>
+    {{- else -}}
+    <footer class="interview-prep-footer">
+      Document personnel de préparation — usage en entretien à votre discrétion.
+    </footer>
+    {{- end -}}
+  </article>
+</div>
+{{ end }}

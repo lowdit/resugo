@@ -1,7 +1,9 @@
 # Challenge — export candidature compatible ATS (Resugo)
 
-> **Statut :** proposition produit (2026-10-16) — à valider humainement avant exécution `P-resugo-ats-export-01`.  
-> **Plan :** [`lowtech-dev-method/plans/ready/P-resugo-ats-export-01.md`](../../lowtech-dev-method/plans/ready/P-resugo-ats-export-01.md)
+> **Statut :** arbitrage **clôturé** (2026-11-02) — objectif = **canal candidature (texte linéaire)**, pas produit ATS ni garantie plateforme. Incrément **`P-resugo-ats-export-01` archivé** sans implémentation (reprise = nouvelle décision + retour en `plans/ready/`).  
+> **Plan archivé :** [`lowtech-dev-method/plans/archived/P-resugo-ats-export-01.md`](../../lowtech-dev-method/plans/archived/P-resugo-ats-export-01.md) · **Clôture arbitrage :** [`lowtech-dev-method/plans/done/P-resugo-ats-export-arbitrage-2026-11-02.md`](../../lowtech-dev-method/plans/done/P-resugo-ats-export-arbitrage-2026-11-02.md)
+
+**Recadrage (2026-11-02)** : le libellé « ATS » décrit le *contexte d’usage* (upload sur plateformes recrutement), pas le périmètre produit. UI et doc produit privilégient **« export / version texte candidature »**.
 
 ## Contexte
 
@@ -104,15 +106,15 @@ Répondre **oui / non / plus tard** avant `statut: approuvé` sur le NEXT.
 
 | ID | Décision | Date | Par |
 | --- | --- | --- | --- |
-| C1 | | | |
-| C2 | | | |
-| C3 | | | |
-| C4 | | | |
-| C5 | | | |
-| C6 | | | |
-| C7 | | | |
+| C1 | **Oui** — canal « export candidature » dédié, sans revendiquer « 100 % ATS » | 2026-11-02 | arbitrage humain |
+| C2 | **TXT** en priorité | 2026-11-02 | défauts challenge acceptés |
+| C3 | Layout **`resugo` only** | 2026-11-02 | défauts challenge acceptés |
+| C4 | Global avec **opt-out** `resume.atsExport: false` | 2026-11-02 | défauts challenge acceptés |
+| C5 | **DOCX pandoc** — plus tard (phase 4) | 2026-11-02 | défauts challenge acceptés |
+| C6 | **Aucun** impact charte `cv-vitrine` | 2026-11-02 | défauts challenge acceptés |
+| C7 | **Golden file** TXT sur alex-martin (exampleSite) | 2026-11-02 | défauts challenge acceptés |
 
 ## Liens
 
-- Incrément d’exécution : `lowtech-dev-method/prompts/NEXT.md` — `P-resugo-ats-export-01` (`statut: proposé`).
+- Incrément : `lowtech-dev-method/prompts/NEXT.md` — `P-resugo-ats-export-01` (**archivé** 2026-11-02).
 - Écosystème CV : [`lowdit-brand/docs/UNIVERS-COMPOSITION-SITES.md`](../../lowdit-brand/docs/UNIVERS-COMPOSITION-SITES.md).

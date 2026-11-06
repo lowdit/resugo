@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/lowdit/minigo v0.5.0 // indirect
-	github.com/lowdit/resugo v0.3.1-0.20261021090052-1ce2aa183bd7 // indirect
+	github.com/lowdit/resugo v0.3.3 // indirect
 )
 
 replace github.com/lowdit/resugo => ../

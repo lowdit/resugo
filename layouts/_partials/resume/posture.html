@@ -3,7 +3,7 @@
 {{- $p := $page.Params.posture -}}
 {{- if not $p -}}
   {{- with $page.Resources.GetMatch "posture.yaml" -}}
-    {{- $raw := .Content | transform.Unmarshal -}}
+    {{- $raw := . | transform.Unmarshal -}}
     {{- $p = index $raw "posture" -}}
   {{- end -}}
 {{- end -}}
