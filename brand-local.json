@@ -1,4 +1,0 @@
-{
-  "description": "Fichiers locaux autorisés : composants propres à resugo, hors Brand Core.",
-  "allowed": ["static/assets/css/components/resume-gallery.css"]
-}
