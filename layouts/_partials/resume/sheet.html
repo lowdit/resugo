@@ -77,6 +77,7 @@
     {{ $isEducation := or (eq $sectionName "education") (eq $sectionName "formation") }}
     {{ $secOnePageOnly := .onePageOnly | default false }}
     {{ $secFullOnly := .fullPageOnly | default false }}
+    {{ $secPageBreak := .pageBreakBefore | default false }}
     {{ if and $secOnePageOnly (not $onePage) }}
     {{ else if and $secFullOnly $onePage }}
     {{ else if and $onePage $isFocus }}
@@ -115,28 +116,32 @@
     </article>
 
     {{- else }}
-    <article class="section {{ .name | anchorize }}{{ if $hasSkills }} section--skills{{ end }}{{ if $isExperience }} section--experience{{ end }}{{ if $isEducation }} section--education{{ end }}{{ if $isFocus }} section--focus{{ end }}">
+    <article class="section {{ .name | anchorize }}{{ if $hasSkills }} section--skills{{ end }}{{ if $isExperience }} section--experience{{ end }}{{ if $isEducation }} section--education{{ end }}{{ if $isFocus }} section--focus{{ end }}{{ if and $secPageBreak (not $onePage) }} section--page-break{{ end }}">
       <h2>{{ .name }}</h2>
 
       {{- if $isExperience }}
         {{ $expMain := slice }}
         {{ $expListed := slice }}
         {{- range $elements }}
-          {{- if and $onePage .onePageListOnly }}
+          {{- if .onePageListOnly }}
             {{ $expListed = $expListed | append . }}
           {{- else }}
             {{ $expMain = $expMain | append . }}
           {{- end }}
         {{- end }}
         {{- $expLimit := int ($resume.onePageExperienceLimit | default 0) }}
+        {{- $fullExpLimit := int ($resume.fullPageExperienceLimit | default 0) }}
         {{- if and $onePage (gt $expLimit 0) (gt (len $expMain) $expLimit) }}
           {{- $expListed = $expListed | append (after $expLimit $expMain) }}
           {{- $expMain = first $expLimit $expMain }}
+        {{- else if and (not $onePage) (gt $fullExpLimit 0) (gt (len $expMain) $fullExpLimit) }}
+          {{- $expListed = $expListed | append (after $fullExpLimit $expMain) }}
+          {{- $expMain = first $fullExpLimit $expMain }}
         {{- end }}
         {{- range $expMain }}
           {{ partial "resume/experience-entry.html" (dict "exp" . "onePage" $onePage "classic" $classic) }}
         {{- end }}
-        {{- if and $onePage (gt (len $expListed) 0) }}
+        {{- if and (gt (len $expListed) 0) (or $onePage (gt $fullExpLimit 0)) }}
         <p class="experience-one-page-inline">
           <strong>Parcours antérieur :</strong>
           {{- range $i, $item := $expListed }}

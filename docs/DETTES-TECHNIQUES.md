@@ -94,6 +94,33 @@
 - [ ] **`layouts/gallery/` est vide** : vestige à supprimer ou à documenter.
 - [ ] **`/favicon.ico` renvoie 404** sur les deux sites (le navigateur le demande
   même quand des `<link rel=icon>` existent). Ajouter un `favicon.ico` racine.
+
+## Layouts locaux du blog (bertrandkeller.github.io)
+
+Le 2026-11-24, `_default/single`, `_default/list`, `_default/terms`, `posts/list`
+et `links/links-resources` ont été remontés dans Higo (options de site
+`higo_single_header_class`, `higo_source_link`, `higo_list_compact`,
+`higo_list_by_year`). Restent dans le blog, au même chemin qu'un thème :
+
+- [ ] `layouts/posts/single.html` (Higo) : carte auteur avec avatar personnel
+  codé en dur, libellés de série en anglais, `media_url` en `errorf`, pas
+  d'image mise en avant. À remonter quand Higo aura une carte auteur paramétrable
+  (`author.avatar`) et des libellés i18n compatibles.
+- [ ] `layouts/_partials/posts/post-entry.html` (Higo) : liens `RelPermalink`
+  et date sans `mt-0`. À supprimer quand Higo passera aux liens relatifs.
+- [ ] `layouts/_partials/print/links.html` et `layouts/_partials/utils/nav-depth.html`
+  (Higo) : seule différence `RelPermalink` au lieu de `Permalink`. Même condition.
+- [ ] `layouts/index.html` (Higo, Resugo, Sligo) : accueil propre au site (textes
+  commerciaux, `data/commercial`). Contenu du site, à garder.
+- [ ] `layouts/_partials/print/courrier.html` (Repogo) : identique à Repogo à un
+  commentaire près. Supprimable après vérification du rendu courrier.
+- [ ] `layouts/interview-prep/single.html` (Resugo) : classes `markdown` au lieu
+  de `wrapper`/`doc-body`. À trancher dans Resugo, puis supprimer.
+
+Les autres layouts locaux (hubs Lowtus et parutions, `jobs/`, `lowdit/page-date`,
+`lowtus/*`, `_markup/render-passthrough`, shortcodes, `expertises`, `competition`, etc.)
+n'ont pas d'équivalent dans un thème : contenu ou paramétrage propre au site.
+
 ## Tests du 2026-10-26
 
 - `bin/serve-hugo test dev resugo repogo sligo` : 3/3 OK.
