@@ -33,6 +33,7 @@ reçoivent les sites qui suivent `main`. Politique :
 
 ### Ajouté
 
+- Modèle `cv` déclaré (`[params.lowdit.models.cv]`).
 - Feuille du modèle `assets/css/views/cv-vitrine.css`, venue de `lowdit-kit` (même
   chemin : transparent).
 - `exampleSite` fonctionne sans minigo : `theme = ["github.com/lowdit/resugo", "github.com/lowdit/lowdit-kit"]`.

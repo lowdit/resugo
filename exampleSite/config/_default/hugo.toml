@@ -10,8 +10,7 @@ theme = ["github.com/lowdit/resugo", "github.com/lowdit/lowdit-kit"]
   logo = "logos/resugo.png"
   faviconDir = "favicons/resugo"
   socialImage = "/assets/social/twittercard-default.png"
-  siteProfile = "cv"
-  view = "cv-vitrine"
+  model = "cv"
   homeEyebrow = "CV · galerie"
 
 [[menus.main]]

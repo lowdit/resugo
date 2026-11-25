@@ -22,3 +22,8 @@
   notAlternative = false
   permalinkable = true
   isHTML = true
+
+# Modèle servi par resugo : accueil CV et feuille vitrine.
+[params.lowdit.models.cv]
+  home = "home/cv.html"
+  sheet = "cv-vitrine"
