@@ -4,7 +4,7 @@ defaultContentLanguage = "fr"
 
 # Modules résolus sur les dépôts locaux par bin/hugo.work (aussi pour hugo server).
 # La prod (config/production) garde les versions épinglées par go.mod.
-theme = ["github.com/lowdit/minigo", "github.com/lowdit/resugo"]
+theme = ["github.com/lowdit/resugo", "github.com/lowdit/lowdit-kit"]
 
 [params.lowdit]
   logo = "logos/resugo.png"
@@ -30,5 +30,5 @@ theme = ["github.com/lowdit/minigo", "github.com/lowdit/resugo"]
   unsafe = true
 
 [module]
-  # Espace de travail local : minigo, lowdit-kit et les modules du disque.
+  # Espace de travail local : lowdit-kit et les modules du disque.
   workspace = "../../bin/hugo.work"
