@@ -38,6 +38,11 @@ reçoivent les sites qui suivent `main`. Politique :
   chemin : transparent).
 - `exampleSite` fonctionne sans minigo : `theme = ["github.com/lowdit/resugo", "github.com/lowdit/lowdit-kit"]`.
 
+### Corrigé
+
+- `cv-vitrine.css` lit les rôles du kit (`--lowdit-color-*`) au lieu de la palette
+  Lowdit : une marque déclinée s'y applique. Même rendu pour Lowdit.
+
 ## v0.3.3
 
 Dernière version distribuée avec des copies de la marque Brand. Historique antérieur : `git log`.
